@@ -7,12 +7,16 @@ import com.example.project.repository.TripRepository;
 import com.example.project.service.BookingService;
 import com.example.project.service.SeatService;
 import com.example.project.service.TicketService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/tickets")
@@ -50,11 +54,17 @@ public class TicketController {
             }
             return "passenger/booking-form";
         }
+
         try {
             String ticketCode = bookingService.processBooking(dto);
             model.addAttribute("message", "Đặt vé thành công! Mã vé của bạn là: " + ticketCode);
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            // Không hiển thị lỗi SQL/stack trace ra UI
+            String msg = e.getMessage();
+            if (msg == null || msg.isBlank()) {
+                msg = "Có lỗi xảy ra. Vui lòng thử lại.";
+            }
+            model.addAttribute("error", msg);
         }
         return "passenger/booking-result";
     }
@@ -78,7 +88,8 @@ public class TicketController {
     // CORE-09: Khách hàng yêu cầu hủy vé
     @PostMapping("/cancel")
     public String cancelTicket(@RequestParam Long ticketId,
-                               @RequestParam String phone, Model model) {
+                               @RequestParam String phone,
+                               Model model) {
         try {
             ticketService.cancelProcess(ticketId, phone);
             model.addAttribute("message", "Hủy vé thành công! Ghế đã được giải phóng.");
@@ -88,5 +99,4 @@ public class TicketController {
         return "passenger/cancel-result";
     }
 }
-
 

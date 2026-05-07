@@ -2,6 +2,7 @@ package com.example.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,4 +26,9 @@ public class Trip {
 
     @Column(nullable = false)
     private Double price;
+
+    // Thời điểm tạo chuyến xe (phục vụ sắp xếp theo "thời gian tạo")
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 }

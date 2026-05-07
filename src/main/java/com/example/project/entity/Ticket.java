@@ -24,7 +24,9 @@ public class Ticket {
     @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip;
 
-    @OneToOne
+    // Một ghế (trên một trip) có thể được đặt nhiều lần theo thời gian (vé hủy, vé mới...),
+    // vì vậy Ticket -> Seat là ManyToOne (không unique seat_id).
+    @ManyToOne
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 

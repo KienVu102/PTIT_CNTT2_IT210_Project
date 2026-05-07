@@ -6,9 +6,9 @@ import com.example.project.entity.User;
 import com.example.project.enums.Role;
 import com.example.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +20,27 @@ public class UserService {
     // CORE-01: Đăng ký tài khoản Hành khách, mật khẩu BCrypt
     @Transactional
     public void register(RegisterDTO dto) {
-        if (userRepository.findByUsername(dto.getUsername()) != null) {
+        String username = dto.getUsername() == null ? null : dto.getUsername().trim();
+        String phone = dto.getPhone() == null ? null : dto.getPhone().trim();
+        String email = dto.getEmail() == null ? null : dto.getEmail().trim().toLowerCase();
+
+        if (username != null && userRepository.findByUsername(username) != null) {
             throw new RuntimeException("Tên đăng nhập đã tồn tại");
         }
+        if (phone != null && userRepository.existsByPhone(phone)) {
+            throw new RuntimeException("Số điện thoại đã tồn tại");
+        }
+        if (email != null && userRepository.existsByEmailIgnoreCase(email)) {
+            throw new RuntimeException("Email đã tồn tại");
+        }
+
         User user = new User();
-        user.setUsername(dto.getUsername());
-        // BCrypt hash mật khẩu - CORE-01
+        user.setUsername(username);
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         user.setRole(Role.PASSENGER);
         user.setFullName(dto.getFullName());
-        user.setPhone(dto.getPhone());
-        user.setEmail(dto.getEmail());
+        user.setPhone(phone);
+        user.setEmail(email);
         userRepository.save(user);
     }
 
@@ -52,3 +62,4 @@ public class UserService {
         userRepository.save(user);
     }
 }
+

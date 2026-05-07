@@ -54,10 +54,10 @@ public class DataSeeder {
                 LocalDateTime tomorrow2 = LocalDateTime.now().plusDays(1).withHour(13).withMinute(30).withSecond(0);
                 LocalDateTime dayAfter = LocalDateTime.now().plusDays(2).withHour(8).withMinute(0).withSecond(0);
 
-                Trip t1 = tripRepo.save(new Trip(null, r1, bus1, tomorrow, 150000.0));
-                Trip t2 = tripRepo.save(new Trip(null, r1, bus2, tomorrow2, 200000.0));
-                Trip t3 = tripRepo.save(new Trip(null, r2, bus3, tomorrow, 120000.0));
-                Trip t4 = tripRepo.save(new Trip(null, r4, bus2, dayAfter, 350000.0));
+                Trip t1 = tripRepo.save(new Trip(null, r1, bus1, tomorrow, 150000.0, null));
+                Trip t2 = tripRepo.save(new Trip(null, r1, bus2, tomorrow2, 200000.0, null));
+                Trip t3 = tripRepo.save(new Trip(null, r2, bus3, tomorrow, 120000.0, null));
+                Trip t4 = tripRepo.save(new Trip(null, r4, bus2, dayAfter, 350000.0, null));
 
                 // Seed Seats cho mỗi chuyến
                 seedSeats(seatRepo, t1, bus1.getTotalSeats());

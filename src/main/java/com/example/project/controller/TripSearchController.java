@@ -23,7 +23,7 @@ public class TripSearchController {
     private final TripService tripService;
     private final LocationRepository locationRepository;
 
-    // CORE-05: Trang tìm kiếm chuyến xe
+    // CORE-05 & Hướng 3 Mở rộng: Trang tìm kiếm chuyến xe (ngày tùy chọn để linh hoạt lựa chọn giờ khác nhau)
     @GetMapping("/search")
     public String searchTrips(
             @RequestParam(required = false) Long fromId,
@@ -34,9 +34,20 @@ public class TripSearchController {
         List<Location> locations = locationRepository.findAll();
         model.addAttribute("locations", locations);
 
-        if (fromId != null && toId != null && date != null) {
+        if (fromId != null && toId != null) {
             try {
-                List<TripSearchDTO> trips = tripService.searchTrips(fromId, toId, date);
+                List<TripSearchDTO> trips;
+
+                // Nếu có ngày: tìm kiếm chuyến xe theo tuyến + ngày cụ thể
+                if (date != null) {
+                    trips = tripService.searchTrips(fromId, toId, date);
+                    model.addAttribute("searchType", "byDate");
+                } else {
+                    // Nếu không có ngày: tìm kiếm tất cả chuyến xe từ tuyến đó (các khung giờ khác nhau)
+                    trips = tripService.searchTripsByRoute(fromId, toId);
+                    model.addAttribute("searchType", "byRoute");
+                }
+
                 model.addAttribute("trips", trips);
                 model.addAttribute("fromId", fromId);
                 model.addAttribute("toId", toId);

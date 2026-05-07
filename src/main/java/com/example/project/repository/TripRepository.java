@@ -23,4 +23,15 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
                          @Param("toId") Long toId,
                          @Param("startOfDay") LocalDateTime startOfDay,
                          @Param("endOfDay") LocalDateTime endOfDay);
+
+    // Hướng 3 Mở rộng: Tìm kiếm chuyến xe theo tuyến đường (không cần ngày) - cho phép linh hoạt lựa chọn các khung giờ khác nhau
+    @Query("SELECT t FROM Trip t " +
+           "JOIN FETCH t.route r " +
+           "JOIN FETCH r.fromLocation fl " +
+           "JOIN FETCH r.toLocation tl " +
+           "JOIN FETCH t.bus b " +
+           "WHERE fl.id = :fromId AND tl.id = :toId " +
+           "ORDER BY t.departureTime ASC")
+    List<Trip> findTripsByRoute(@Param("fromId") Long fromId,
+                                @Param("toId") Long toId);
 }

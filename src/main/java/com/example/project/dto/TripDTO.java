@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 public class TripDTO {
     private Long id;
     private Long routeId;
+    private Long fromLocationId;
+    private Long toLocationId;
     private Long busId;
     private LocalDateTime departureTime;
     private Double price;

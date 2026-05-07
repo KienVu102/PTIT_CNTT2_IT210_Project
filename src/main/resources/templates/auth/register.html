@@ -27,7 +27,7 @@
         <div class="col-md-5">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
-                    <h4>?? Đăng ký tài khoản Hành khách</h4>
+                    <h4>Đăng ký tài khoản Hành khách</h4>
                 </div>
                 <div class="card-body">
                     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
@@ -57,7 +57,7 @@
                             <div class="error-message" id="phone-error" style="display: none;"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">Email (Gmail) *</label>
                             <input type="email" class="form-control" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" id="email">
                             <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                             <div class="error-message" id="email-error" style="display: none;"></div>
@@ -144,8 +144,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const error = document.getElementById('email-error');
         const value = field.value.trim();
         
-        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            showError(field, error, 'Email không hợp lệ');
+        if (!value) {
+            showError(field, error, 'Email không được để trống');
+        } else if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/.test(value)) {
+            showError(field, error, 'Email phải đúng định dạng Gmail (@gmail.com)');
         } else {
             clearError(field, error);
         }

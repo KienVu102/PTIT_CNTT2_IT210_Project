@@ -10,6 +10,7 @@ import com.example.project.repository.SeatRepository;
 import com.example.project.repository.TicketRepository;
 import com.example.project.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,22 +58,28 @@ public class BookingService {
         ticket.setStatus(TicketStatus.PENDING);
         ticket.setBookingTime(LocalDateTime.now());
 
-        ticketRepository.save(ticket);
+        try {
+            ticketRepository.save(ticket);
+        } catch (DataIntegrityViolationException e) {
+            // Defensive: in case DB still has a unique constraint or a concurrent booking slipped through.
+            throw new RuntimeException("Ghế vừa được người khác đặt. Vui lòng chọn ghế khác.");
+        }
 
         // 6. Hướng 3: Gửi email xác nhận bất đồng bộ (không block request)
         if (dto.getCustomerEmail() != null && !dto.getCustomerEmail().isBlank()) {
             emailService.sendBookingConfirmEmail(
-                dto.getCustomerEmail(),
-                dto.getCustomerName(),
-                ticketCode,
-                trip.getRoute().getFromLocation().getName(),
-                trip.getRoute().getToLocation().getName(),
-                trip.getDepartureTime(),
-                seat.getSeatNumber(),
-                trip.getPrice()
+                    dto.getCustomerEmail(),
+                    dto.getCustomerName(),
+                    ticketCode,
+                    trip.getRoute().getFromLocation().getName(),
+                    trip.getRoute().getToLocation().getName(),
+                    trip.getDepartureTime(),
+                    seat.getSeatNumber(),
+                    trip.getPrice()
             );
         }
 
         return ticketCode;
     }
 }
+

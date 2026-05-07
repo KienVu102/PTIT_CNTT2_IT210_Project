@@ -55,15 +55,26 @@
         <div class="col-md-10 p-4">
             <h3 class="fw-bold mb-4"><i class="bi bi-calendar-event"></i> Quản lý chuyến xe</h3>
 
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+            </div>
+
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white fw-bold"><i class="bi bi-plus-circle"></i> Thêm chuyến xe mới</div>
                 <div class="card-body">
                     <form th:action="@{/admin/trips}" th:object="${newTrip}" method="post" class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label">Tuyến đường</label>
-                            <select class="form-select" th:field="*{routeId}" required>
-                                <option value="">Chọn tuyến...</option>
-                                <option th:each="r : ${routes}" th:value="${r.id}" th:text="${r.fromLocation.name} + ' → ' + ${r.toLocation.name}"></option>
+                        <div class="col-md-2">
+                            <label class="form-label">Điểm đi</label>
+                            <select class="form-select" th:field="*{fromLocationId}" required>
+                                <option value="">Chọn điểm đi...</option>
+                                <option th:each="loc : ${locations}" th:value="${loc.id}" th:text="${loc.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Điểm đến</label>
+                            <select class="form-select" th:field="*{toLocationId}" required>
+                                <option value="">Chọn điểm đến...</option>
+                                <option th:each="loc : ${locations}" th:value="${loc.id}" th:text="${loc.name}"></option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -77,7 +88,7 @@
                             <label class="form-label">Thời gian khởi hành</label>
                             <input type="datetime-local" class="form-control" th:field="*{departureTime}" required>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <label class="form-label">Giá vé</label>
                             <input type="number" class="form-control" th:field="*{price}" min="0" step="1000" required>
                         </div>
@@ -110,8 +121,11 @@
                                     <td th:text="${trip.plateNumber} + ' (' + ${trip.busType} + ')'"></td>
                                     <td th:text="${#temporals.format(trip.departureTime, 'HH:mm dd/MM/yyyy')}"></td>
                                     <td th:text="${#numbers.formatInteger(trip.price, 3, 'COMMA')} + ' đ'"></td>
-                                    <td>
-                                        <a th:href="@{/admin/trips/delete/{id}(id=${trip.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Xóa chuyến xe này?')"><i class="bi bi-trash"></i> Xóa</a>
+                                    <td class="text-nowrap">
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Trip actions">
+                                            <a th:href="@{/admin/trips/edit/{id}(id=${trip.id})}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                            <a th:href="@{/admin/trips/delete/{id}(id=${trip.id})}" class="btn btn-outline-danger" onclick="return confirm('Xóa chuyến xe này?')"><i class="bi bi-trash"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr th:if="${trips == null or trips.isEmpty()}">

@@ -52,7 +52,15 @@
                 <div class="card-body">
                     <form th:action="@{/admin/buses}" th:object="${newBus}" method="post" class="row g-3">
                         <div class="col-md-2"><label class="form-label">Biển số</label><input type="text" class="form-control" th:field="*{plateNumber}" required></div>
-                        <div class="col-md-2"><label class="form-label">Loại xe</label><input type="text" class="form-control" th:field="*{busType}" placeholder="Ghế ngồi / Giường nằm" required></div>
+                        <div class="col-md-2">
+                            <label class="form-label">Loại xe</label>
+                            <select class="form-select" th:field="*{busType}" required>
+                                <option value="">Chọn loại...</option>
+                                <option value="Ghế ngồi">Ghế ngồi</option>
+                                <option value="Giường nằm">Giường nằm</option>
+                                <option value="Limousine">Limousine</option>
+                            </select>
+                        </div>
                         <div class="col-md-2"><label class="form-label">Số ghế</label><input type="number" class="form-control" th:field="*{totalSeats}" min="1" required></div>
                         <div class="col-md-3"><label class="form-label">Công ty</label><input type="text" class="form-control" th:field="*{company}" required></div>
                         <div class="col-md-2"><label class="form-label">Tài xế</label><input type="text" class="form-control" th:field="*{driverName}" required></div>

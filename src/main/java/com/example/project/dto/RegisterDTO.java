@@ -2,6 +2,7 @@ package com.example.project.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -19,8 +20,12 @@ public class RegisterDTO {
     private String fullName;
 
     @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^[0-9]{10,11}$", message = "Số điện thoại phải là 10-11 số")
     private String phone;
 
+    @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@gmail\\.com$", message = "Email phải đúng định dạng Gmail (@gmail.com)")
     private String email;
 }
+
