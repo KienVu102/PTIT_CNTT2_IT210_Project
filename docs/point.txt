@@ -1,0 +1,36 @@
+﻿
+Báº¢NG ÄIá»‚M ÄÃNH GIÃ â€“ Há»† THá»NG Äáº¶T VÃ‰ XE KHÃCH LIÃŠN Tá»ˆNH (BUS TICKET PRO)
+THANG ÄIá»‚M CHUYá»‚N Äá»”I (theo tiÃªu chÃ­ Ä‘Ã¡nh giÃ¡ má»¥c 5)
+Chá»©c nÄƒng
+Má»¥c
+Äiá»ƒm cÆ¡ báº£n
+Má»©c Ä‘áº¡t
+Äiá»u kiá»‡n
+Äiá»ƒm sá»‘
+Quáº£n lÃ½ tÃ i khoáº£n &amp; phÃ¢n quyá»n
+CORE-01: ÄÄƒng kÃ½, Ä‘Äƒng nháº­p. Máº­t kháº©u Ä‘Æ°á»£c bÄƒm (BCrypt/PBKDF2)
+KhÃ¡
+HoÃ n thÃ nh Ä‘áº§y Ä‘á»§ cÃ¡c luá»“ng CORE (01 â†’ 09), code Ä‘Ãºng kiáº¿n trÃºc 3 lá»›p, cÃ³ DTO, transaction
+60 â€“ 75
+CORE-02: Kiá»ƒm soÃ¡t truy cáº­p â€“ HÃ nh khÃ¡ch khÃ´ng vÃ o trang Staff/Admin; Staff khÃ´ng vÃ o trang cáº¥u hÃ¬nh Admin
+Giá»i
+HoÃ n thÃ nh CORE + tÃ­ch há»£p thÃ nh cÃ´ng 1 hÆ°á»›ng má»Ÿ rá»™ng (má»¥c 4)
+75 â€“ 90
+CORE-03: Quáº£n lÃ½ há»“ sÆ¡ cÃ¡ nhÃ¢n (Profile) cho tá»«ng loáº¡i ngÆ°á»i dÃ¹ng
+Xuáº¥t sáº¯c
+CÃ¡c yÃªu cáº§u trÃªn + giao diá»‡n thÃ¢n thiá»‡n, validation Ä‘áº§y Ä‘á»§ (client &amp; server), OOP tá»‘t, exception handling táº­p trung, chá»‘ng Ä‘áº·t trÃ¹ng gháº¿ hiá»‡u quáº£
+90 â€“ 100
+Luá»“ng nghiá»‡p vá»¥ chÃ­nh
+CORE-04: Admin CRUD danh má»¥c Xe (Bus). CÃ¡c danh má»¥c Tá»‰nh thÃ nh, Tuyáº¿n Ä‘Æ°á»ng Ä‘Æ°á»£c seed sáºµn trong DB
+CORE-05: Tra cá»©u &amp; chá»‘ng xung Ä‘á»™t gháº¿ â€“ Hiá»ƒn thá»‹ sÆ¡ Ä‘á»“ gháº¿, disable gháº¿ Ä‘Ã£ Ä‘áº·t (PENDING/BOOKED), giá»¯ chá»— táº¡m thá»i
+CORE-06: Äáº·t vÃ© &amp; tÃ­nh toÃ n váº¹n dá»¯ liá»‡u (Transaction) â€“ Táº¡o ticket (PENDING) + cáº­p nháº­t seat (PENDING) trong cÃ¹ng transaction, rollback náº¿u lá»—i
+CORE-07: Tra cá»©u vÃ© &amp; JOIN phá»©c táº¡p â€“ Nháº­p mÃ£ vÃ© + SÄT, hiá»ƒn thá»‹ Ä‘áº§y Ä‘á»§ thÃ´ng tin liÃªn káº¿t (tuyáº¿n, xe, gháº¿, giá» Ä‘i, tráº¡ng thÃ¡i)
+CORE-08: Duyá»‡t vÃ© &amp; quáº£n lÃ½ tráº¡ng thÃ¡i â€“ Staff xÃ¡c nháº­n thanh toÃ¡n (PENDING â†’ PAID), há»§y vÃ© quÃ¡ háº¡n (giáº£i phÃ³ng gháº¿)
+CORE-09: Há»§y vÃ© chá»§ Ä‘á»™ng &amp; giáº£i phÃ³ng tÃ i nguyÃªn â€“ HÃ nh khÃ¡ch há»§y trÆ°á»›c 12h, vÃ© â†’ CANCELLED, gháº¿ â†’ AVAILABLE
+Tá»•ng Ä‘iá»ƒm pháº§n CORE (báº¯t buá»™c)
+Má»Ÿ rá»™ng (tá»± chá»n, cáº§n lÃ m Ã­t nháº¥t 1 hÆ°á»›ng)
+HÆ°á»›ng 1: TÃ­ch há»£p thanh toÃ¡n trá»±c tuyáº¿n VNPay/Momo (sandbox, callback an toÃ n)
+HÆ°á»›ng 2: Báº£o máº­t nÃ¢ng cao (Spring Security/Filter, JWT/OAuth2, phÃ¢n quyá»n endpoint)
+HÆ°á»›ng 3: Xá»­ lÃ½ báº¥t Ä‘á»“ng bá»™ &amp; tá»± Ä‘á»™ng hÃ³a (gá»­i email @Async, cron job tá»± Ä‘á»™ng há»§y vÃ© pending sau 30 phÃºt)
+HÆ°á»›ng 4: Tá»‘i Æ°u truy váº¥n &amp; bÃ¡o cÃ¡o thá»‘ng kÃª (Dashboard doanh thu, top chuyáº¿n xe, dÃ¹ng GROUP BY/SUM, khÃ´ng dÃ¹ng vÃ²ng láº·p tÃ­nh toÃ¡n)
+Tá»•ng Ä‘iá»ƒm tá»‘i Ä‘a

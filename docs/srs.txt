@@ -1,0 +1,226 @@
+﻿
+TÃ€I LIá»†U Äáº¶C Táº¢ YÃŠU Cáº¦U (SRS) - BUS TICKET PRO
+PROJECT JAVA WEB APPLICATION
+TÃªn dá»± Ã¡n:
+ Há»‡ thá»‘ng Äáº·t vÃ© Xe khÃ¡ch LiÃªn tá»‰nh (Bus Ticket Pro)
+ 
+Kiáº¿n trÃºc:
+ Monolithic (á»¨ng dá»¥ng nguyÃªn khá»‘i)
+ 
+TÃ­nh cháº¥t:
+ Pháº§n Cá»‘t lÃµi (Báº¯t buá»™c) + CÃ¡c Module Má»Ÿ rá»™ng (Tá»± chá»n)
+ 
+1. MÃ” Táº¢ Tá»”NG QUAN
+Há»‡ thá»‘ng lÃ  má»™t cá»•ng thÃ´ng tin trá»±c tuyáº¿n cho phÃ©p hÃ nh khÃ¡ch tra cá»©u chuyáº¿n xe, chá»n gháº¿ vÃ  Ä‘áº·t vÃ©. Äá»“ng thá»i cung cáº¥p cÃ´ng cá»¥ cho nhÃ¢n viÃªn nhÃ  xe quáº£n lÃ½ vÃ  duyá»‡t vÃ©. ToÃ n bá»™ mÃ£ nguá»“n (giao diá»‡n, xá»­ lÃ½ nghiá»‡p vá»¥, káº¿t ná»‘i CSDL) Ä‘Æ°á»£c Ä‘Ã³ng gÃ³i vÃ  triá»ƒn khai trÃªn cÃ¹ng má»™t mÃ¡y chá»§ (VD: Tomcat).
+CÃ¡c TÃ¡c nhÃ¢n (Actors)
+1.
+     
+HÃ nh khÃ¡ch (Passenger):
+ TÃ¬m kiáº¿m chuyáº¿n xe, xem sÆ¡ Ä‘á»“ gháº¿, Ä‘áº·t vÃ©, tra cá»©u tráº¡ng thÃ¡i vÃ©, há»§y vÃ©.
+2.
+     
+NhÃ¢n viÃªn (Staff):
+ Xem danh sÃ¡ch vÃ© chá» duyá»‡t, xÃ¡c nháº­n thanh toÃ¡n/duyá»‡t vÃ©, quáº£n lÃ½ sÆ¡ Ä‘á»“ xe.
+3.
+     
+Quáº£n trá»‹ viÃªn (Admin):
+ Quáº£n lÃ½ danh má»¥c xe, tÃ i xáº¿ (Fix cá»©ng), quáº£n lÃ½ tuyáº¿n Ä‘Æ°á»ng vÃ  bÃ¡o cÃ¡o.
+SÆ¡ Ä‘á»“ Use Case Tá»•ng quan
+ 
+2. PHáº¦N Cá»T LÃ•I (CORE REQUIREMENTS) - Báº®T BUá»˜C
+Pháº§n nÃ y yÃªu cáº§u sinh viÃªn xÃ¢y dá»±ng hoÃ n chá»‰nh luá»“ng nghiá»‡p vá»¥ cÆ¡ báº£n. Dá»¯ liá»‡u Ä‘Æ°á»£c lÆ°u trá»¯ trong Relational Database (MySQL, PostgreSQLâ€¦).
+2.1. Quáº£n lÃ½ TÃ i khoáº£n &amp; PhÃ¢n quyá»n cÆ¡ báº£n
+CORE-01:
+ ÄÄƒng kÃ½, Ä‘Äƒng nháº­p. Máº­t kháº©u lÆ°u trong database báº¯t buá»™c pháº£i Ä‘Æ°á»£c bÄƒm (hash) báº£o máº­t (VD: BCrypt, PBKDF2).
+CORE-02:
+ Kiá»ƒm soÃ¡t truy cáº­p. HÃ nh khÃ¡ch khÃ´ng Ä‘Æ°á»£c vÃ o trang cá»§a NhÃ¢n viÃªn/Admin; NhÃ¢n viÃªn khÃ´ng Ä‘Æ°á»£c vÃ o trang cáº¥u hÃ¬nh cá»§a Admin.
+CORE-03:
+ Quáº£n lÃ½ Há»“ sÆ¡ cÃ¡ nhÃ¢n (Profile) cho tá»«ng loáº¡i ngÆ°á»i dÃ¹ng (thÃ´ng tin há» tÃªn, SÄT, emailâ€¦).
+2.2. Luá»“ng Nghiá»‡p vá»¥ chÃ­nh (Core Logic)
+CORE-04: Quáº£n lÃ½ Danh má»¥c &amp; Dá»¯ liá»‡u Seed
+Admin thá»±c hiá»‡n quáº£n lÃ½ (ThÃªm/Xem/Sá»­a/XÃ³a) cho duy nháº¥t danh má»¥c 
+Xe (Bus)
+.
+ CÃ¡c danh má»¥c â€œTá»‰nh thÃ nh (Location)â€, â€œTuyáº¿n Ä‘Æ°á»ng (Route)â€ sáº½ Ä‘Æ°á»£c hardcode (seed data) trá»±c tiáº¿p trong 
+Database
+ Ä‘á»ƒ lÃ m dá»¯ liá»‡u ná»n táº£ng cho há»‡ thá»‘ng.
+YÃªu cáº§u ká»¹ thuáº­t:
+ Báº£ng locations vÃ  routes Ä‘Æ°á»£c khá»Ÿi táº¡o sáºµn báº±ng script SQL. Admin chá»‰ cÃ³ thá»ƒ CRUD trÃªn báº£ng buses.
+ 
+CORE-05: Tra cá»©u &amp; Chá»‘ng xung Ä‘á»™t Gháº¿ ngá»“i
+HÃ nh khÃ¡ch chá»n: Äiá»ƒm Ä‘i â†’ Äiá»ƒm Ä‘áº¿n â†’ NgÃ y Ä‘i. Há»‡ thá»‘ng hiá»ƒn thá»‹ sÆ¡ Ä‘á»“ gháº¿ dáº¡ng lÆ°á»›i (VD: 2x10, 2x20 tÃ¹y loáº¡i xe).
+YÃªu cáº§u nghiá»‡p vá»¥ (Core Logic):
+ Há»‡ thá»‘ng pháº£i kiá»ƒm tra 
+thá»i gian thá»±c
+ tráº¡ng thÃ¡i gháº¿.
+Náº¿u gháº¿ Ä‘Ã£ cÃ³ ngÆ°á»i Ä‘áº·t (tráº¡ng thÃ¡i PENDING hoáº·c BOOKED), há»‡ thá»‘ng pháº£i 
+disable
+ hoáº·c Ä‘á»•i mÃ u gháº¿ Ä‘Ã³, khÃ´ng cho phÃ©p ngÆ°á»i thá»© hai click chá»n.
+Khi khÃ¡ch hÃ ng báº¯t Ä‘áº§u chá»n gháº¿, cáº§n Ã¡p dá»¥ng cÆ¡ cháº¿ 
+giá»¯ chá»— táº¡m thá»i
+ (timeout 10-15 phÃºt) náº¿u cÃ³ thá»ƒ, hoáº·c Ä‘áº£m báº£o giao dá»‹ch Ä‘áº·t vÃ© sau Ä‘Ã³ khÃ´ng bá»‹ trÃ¹ng.
+ 
+CORE-06: Äáº·t vÃ© &amp; TÃ­nh toÃ n váº¹n dá»¯ liá»‡u (Transaction)
+Khi khÃ¡ch chá»n gháº¿ vÃ  báº¥m â€œÄáº·t vÃ©â€, há»‡ thá»‘ng táº¡o báº£n ghi vÃ© vÃ  cáº­p nháº­t tráº¡ng thÃ¡i gháº¿.
+YÃªu cáº§u nghiá»‡p vá»¥ (Core Logic):
+ Viá»‡c Ä‘áº·t vÃ© pháº£i tÃ¡c Ä‘á»™ng Ä‘áº¿n 
+nhiá»u báº£ng cÃ¹ng lÃºc
+ (Tickets, Seats).
+Sinh viÃªn pháº£i Ã¡p dá»¥ng 
+Transaction
+: Táº¡o má»›i ticket (tráº¡ng thÃ¡i PENDING), Ä‘á»“ng thá»i cáº­p nháº­t seat sang PENDING.
+Náº¿u báº¥t ká»³ thao tÃ¡c nÃ o tháº¥t báº¡i (vÃ­ dá»¥ gháº¿ vá»«a bá»‹ ngÆ°á»i khÃ¡c Ä‘áº·t trong lÃºc xá»­ lÃ½), toÃ n bá»™ quÃ¡ trÃ¬nh pháº£i 
+Rollback
+ Ä‘á»ƒ khÃ´ng sinh ra vÃ© â€œmá»“ cÃ´iâ€ hoáº·c giá»¯ gháº¿ sai.
+Sá»­ dá»¥ng SELECT FOR UPDATE hoáº·c Optimistic Locking Ä‘á»ƒ trÃ¡nh race condition.
+ 
+CORE-07: Tra cá»©u VÃ© &amp; LiÃªn káº¿t dá»¯ liá»‡u phá»©c táº¡p (JOIN)
+HÃ nh khÃ¡ch nháº­p 
+MÃ£ vÃ© + Sá»‘ Ä‘iá»‡n thoáº¡i
+ Ä‘á»ƒ xem chi tiáº¿t vÃ©.
+YÃªu cáº§u nghiá»‡p vá»¥ (Core Logic):
+ Há»‡ thá»‘ng khÃ´ng chá»‰ tráº£ vá» thÃ´ng tin cÆ¡ báº£n cá»§a vÃ© mÃ  pháº£i truy xuáº¥t dá»¯ liá»‡u liÃªn káº¿t giá»¯a nhiá»u báº£ng (JOIN) Ä‘á»ƒ hiá»ƒn thá»‹ Ä‘áº§y Ä‘á»§:
+MÃ£ vÃ©, Há» tÃªn khÃ¡ch, Sá»‘ Ä‘iá»‡n thoáº¡i
+Biá»ƒn sá»‘ xe, Loáº¡i xe, TÃªn tÃ i xáº¿ (náº¿u cÃ³)
+Tuyáº¿n Ä‘Æ°á»ng (Äiá»ƒm Ä‘i â†’ Äiá»ƒm Ä‘áº¿n), Giá» khá»Ÿi hÃ nh, NgÃ y Ä‘i
+Vá»‹ trÃ­ gháº¿ (sá»‘ gháº¿, táº§ng/táº§ng trÃªn-dÆ°á»›i)
+Tráº¡ng thÃ¡i vÃ© (Chá» thanh toÃ¡n / ÄÃ£ thanh toÃ¡n / ÄÃ£ há»§y)
+ 
+CORE-08: Duyá»‡t vÃ© &amp; Quáº£n lÃ½ Tráº¡ng thÃ¡i (Cáº­p nháº­t an toÃ n)
+NhÃ¢n viÃªn xem danh sÃ¡ch vÃ© Ä‘ang á»Ÿ tráº¡ng thÃ¡i 
+â€œChá» thanh toÃ¡nâ€
+. Khi khÃ¡ch tráº£ tiá»n táº¡i quáº§y hoáº·c chuyá»ƒn khoáº£n, nhÃ¢n viÃªn báº¥m â€œXÃ¡c nháº­nâ€.
+YÃªu cáº§u nghiá»‡p vá»¥:
+Khi áº¥n xÃ¡c nháº­n, tráº¡ng thÃ¡i vÃ© chuyá»ƒn tá»« PENDING â†’ PAID.
+Náº¿u quÃ¡ 
+30 phÃºt
+ (logic xá»­ lÃ½ thÃªm á»Ÿ extension hoáº·c background job) khÃ¡ch khÃ´ng thanh toÃ¡n, nhÃ¢n viÃªn cÃ³ quyá»n â€œHá»§y vÃ©â€. Khi há»§y, há»‡ thá»‘ng pháº£i 
+giáº£i phÃ³ng gháº¿
+ (cáº­p nháº­t seats.status = AVAILABLE).
+Note:
+ á»ž pháº§n Core chá»‰ yÃªu cáº§u thao tÃ¡c thá»§ cÃ´ng cá»§a nhÃ¢n viÃªn, cÆ¡ cháº¿ tá»± Ä‘á»™ng há»§y sau 30 phÃºt náº±m á»Ÿ pháº§n Má»Ÿ rá»™ng.
+ 
+CORE-09: Há»§y vÃ© chá»§ Ä‘á»™ng &amp; Giáº£i phÃ³ng tÃ i nguyÃªn
+HÃ nh khÃ¡ch cÃ³ thá»ƒ há»§y vÃ© trÆ°á»›c 
+12 tiáº¿ng
+ so vá»›i giá» khá»Ÿi hÃ nh.
+YÃªu cáº§u nghiá»‡p vá»¥ (Core Logic):
+ Khi ngÆ°á»i dÃ¹ng há»§y thÃ nh cÃ´ng:
+Tráº¡ng thÃ¡i vÃ© Ä‘Æ°á»£c cáº­p nháº­t thÃ nh CANCELLED.
+Tráº¡ng thÃ¡i gháº¿ liÃªn káº¿t vá»›i vÃ© Ä‘Ã³ pháº£i Ä‘Æ°á»£c chuyá»ƒn ngay vá» AVAILABLE.
+Quan trá»ng:
+ Gháº¿ Ä‘Ã³ sáº½ tá»± Ä‘á»™ng hiá»ƒn thá»‹ láº¡i lÃ  â€œCÃ²n trá»‘ngâ€ trÃªn sÆ¡ Ä‘á»“ gháº¿ (CORE-05) Ä‘á»ƒ hÃ nh khÃ¡ch khÃ¡c cÃ³ thá»ƒ Ä‘áº·t.
+ 
+3. Gá»¢I Ã THIáº¾T Káº¾ CÆ  Sá»ž Dá»® LIá»†U (DATABASE SCHEMA GUIDELINES)
+Äá»ƒ triá»ƒn khai thÃ nh cÃ´ng cÃ¡c luá»“ng nghiá»‡p vá»¥ trÃªn, Ä‘áº·c biá»‡t lÃ  chá»‘ng xung Ä‘á»™t gháº¿ vÃ  quáº£n lÃ½ giao dá»‹ch, sinh viÃªn cáº§n thiáº¿t káº¿ CSDL chuáº©n hÃ³a (Ã­t nháº¥t Ä‘áº¡t chuáº©n 3NF). DÆ°á»›i Ä‘Ã¢y lÃ  cÃ¡c thá»±c thá»ƒ (Entities) cá»‘t lÃµi:
+users â€“ LÆ°u thÃ´ng tin Ä‘Äƒng nháº­p (username, password_hash, role: PASSENGER/STAFF/ADMIN).
+user_profiles â€“ Há» tÃªn, SÄT, email, Ä‘á»‹a chá»‰ (cÃ³ thá»ƒ gá»™p vÃ o users náº¿u muá»‘n).
+locations â€“ Danh sÃ¡ch tá»‰nh/thÃ nh phá»‘ (seed data: HÃ  Ná»™i, Háº£i PhÃ²ng, Nam Äá»‹nh, â€¦).
+routes â€“ Äiá»ƒm Ä‘i (FK tá»›i locations), Ä‘iá»ƒm Ä‘áº¿n (FK), khoáº£ng cÃ¡ch (km).
+buses â€“ Biá»ƒn sá»‘, loáº¡i xe (29 chá»—, 45 chá»—), tá»•ng sá»‘ gháº¿, hÃ£ng xe, tÃ i xáº¿ (text fix cá»©ng).
+trips â€“ LiÃªn káº¿t route_id + bus_id + ngÃ y/giá» khá»Ÿi hÃ nh, giÃ¡ vÃ©.
+seats â€“ Quáº£n lÃ½ tá»«ng gháº¿ cá»§a má»™t chuyáº¿n xe (trip_id, seat_number, status: AVAILABLE/PENDING/BOOKED).
+tickets â€“ MÃ£ vÃ©, thÃ´ng tin khÃ¡ch (tÃªn, SÄT, email), trip_id, seat_id, tá»•ng tiá»n, tráº¡ng thÃ¡i (PENDING/PAID/CANCELLED), thá»i gian Ä‘áº·t.
+payments (optional cho pháº§n má»Ÿ rá»™ng) â€“ LÆ°u giao dá»‹ch thanh toÃ¡n.
+LÆ°u Ã½ quan há»‡:
+Má»™t trip cÃ³ nhiá»u seats.
+Má»™t ticket thuá»™c vá» má»™t trip vÃ  má»™t seat.
+Ãp dá»¥ng Ä‘Ãºng khÃ³a chÃ­nh (PK), khÃ³a ngoáº¡i (FK) vÃ  sá»­ dá»¥ng Hibernate/JPA mapping (@OneToMany, @ManyToOne, @Enumerated).
+ 
+4. KHÃ”NG GIAN Má»ž Rá»˜NG (OPEN EXTENSIONS) - DÃ€NH CHO NHÃ“M XUáº¤T Sáº®C
+Sinh viÃªn tá»± chá»n 1 hoáº·c nhiá»u hÆ°á»›ng dÆ°á»›i Ä‘Ã¢y Ä‘á»ƒ má»Ÿ rá»™ng á»©ng dá»¥ng Java Web, chá»©ng minh kháº£ nÄƒng Ã¡p dá»¥ng ká»¹ thuáº­t nÃ¢ng cao.
+HÆ°á»›ng 1: TÃ­ch há»£p Thanh toÃ¡n trá»±c tuyáº¿n (VNPay/Momo)
+MÃ´ táº£:
+ Chuyá»ƒn Ä‘á»•i há»‡ thá»‘ng thÃ nh ná»n táº£ng thanh toÃ¡n trá»±c tuyáº¿n thay vÃ¬ chá»‰ nháº­n tiá»n máº·t táº¡i quáº§y.
+TÃ­nh nÄƒng gá»£i Ã½:
+Khi hÃ nh khÃ¡ch Ä‘áº·t vÃ©, táº¡o giao dá»‹ch vá»›i cá»•ng thanh toÃ¡n sandbox (VNPay).
+Tráº¡ng thÃ¡i vÃ© ban Ä‘áº§u lÃ  PENDING. Chá»‰ sau khi nháº­n callback thÃ nh cÃ´ng tá»« cá»•ng thanh toÃ¡n, vÃ© má»›i chuyá»ƒn sang PAID.
+Xá»­ lÃ½ an toÃ n callback/webhook, kiá»ƒm tra chá»¯ kÃ½.
+HÆ°á»›ng 2: Báº£o máº­t NÃ¢ng cao &amp; Quáº£n lÃ½ Session
+MÃ´ táº£:
+ NÃ¢ng cáº¥p cÆ¡ cháº¿ báº£o máº­t cá»§a á»©ng dá»¥ng Web
+TÃ­nh nÄƒng gá»£i Ã½:
+CÃ³ thá»ƒ sá»­ dá»¥ng cÆ¡ cháº¿ 
+Interceptors
+ Ä‘á»ƒ lÃ m vÃ  phÃ¢n quyá»n
+CÃ³ thá»ƒ sá»­ dá»¥ng 
+Spring Security
+ (náº¿u dÃ¹ng Spring Boot) hoáº·c Filter/Interceptor (náº¿u dÃ¹ng Servlet/JSP thuáº§n) Ä‘á»ƒ quáº£n lÃ½ luá»“ng báº£o máº­t táº­p trung
+CÃ³ thá»ƒ sá»­ dá»¥ng báº±ng 
+JWT (JSON Web Token)
+ hoáº·c thÃªm tÃ­nh nÄƒng ÄÄƒng nháº­p báº±ng Google/Facebook (OAuth2)
+PhÃ¢n quyá»n chi tiáº¿t Ä‘áº¿n tá»«ng nÃºt báº¥m (View) vÃ  tá»«ng Ä‘Æ°á»ng dáº«n (URI Endpoint)
+HÆ°á»›ng 3: Xá»­ lÃ½ Báº¥t Ä‘á»“ng bá»™ &amp; Tá»± Ä‘á»™ng hÃ³a
+MÃ´ táº£:
+ Tá»± Ä‘á»™ng gá»­i email/xÃ³a vÃ© háº¿t háº¡n mÃ  khÃ´ng lÃ m cháº­m tráº£i nghiá»‡m ngÆ°á»i dÃ¹ng.
+TÃ­nh nÄƒng gá»£i Ã½:
+Gá»­i Email:
+ Sau khi Ä‘áº·t vÃ© thÃ nh cÃ´ng, há»‡ thá»‘ng gá»­i email xÃ¡c nháº­n (dÃ¹ng JavaMailSender, cháº¡y @Async).
+Cron Job:
+ Má»—i 10 phÃºt quÃ©t cÃ¡c vÃ© PENDING quÃ¡ 30 phÃºt chÆ°a thanh toÃ¡n â†’ tá»± Ä‘á»™ng há»§y vÃ  giáº£i phÃ³ng gháº¿.
+Scheduler:
+ Kiá»ƒm tra cÃ¡c chuyáº¿n Ä‘Ã£ khá»Ÿi hÃ nh vÃ  cáº­p nháº­t tráº¡ng thÃ¡i vÃ© quÃ¡ háº¡n.
+HÆ°á»›ng 4: Tá»‘i Æ°u hÃ³a Truy váº¥n &amp; BÃ¡o cÃ¡o thá»‘ng kÃª
+MÃ´ táº£:
+ Dashboard cho Admin vá»›i cÃ¡c biá»ƒu Ä‘á»“ thá»‘ng kÃª.
+TÃ­nh nÄƒng gá»£i Ã½:
+Doanh thu theo tuyáº¿n Ä‘Æ°á»ng, theo thÃ¡ng (sá»­ dá»¥ng GROUP BY, SUM).
+Top 5 chuyáº¿n xe cÃ³ lÆ°á»£t Ä‘áº·t cao nháº¥t.
+YÃªu cáº§u ká»¹ thuáº­t:
+ KhÃ´ng dÃ¹ng vÃ²ng láº·p for trong Java Ä‘á»ƒ tÃ­nh toÃ¡n; pháº£i viáº¿t JPQL/Native Query.
+ 
+5. QUY Äá»ŠNH Ká»¸ THUáº¬T &amp; TIÃŠU CHÃ CHáº¤M ÄIá»‚M
+1.
+     
+Kiáº¿n trÃºc mÃ£ nguá»“n (Code Architecture):
+o
+
+Tá»• chá»©c code chuáº©n theo mÃ´ hÃ¬nh 
+3 lá»›p
+:
+Â§
+  
+Controller
+ â€“ Tiáº¿p nháº­n request, tráº£ vá» response.
+Â§
+  
+Service
+ â€“ Chá»©a logic nghiá»‡p vá»¥, xá»­ lÃ½ transaction.
+Â§
+  
+Repository/DAO
+ â€“ TÆ°Æ¡ng tÃ¡c database.
+o
+
+Tuyá»‡t Ä‘á»‘i khÃ´ng viáº¿t logic database trong Controller.
+o
+
+Sá»­ dá»¥ng pattern 
+DTO
+ Ä‘á»ƒ truyá»n dá»¯ liá»‡u giá»¯a Client vÃ  Server, khÃ´ng phÆ¡i bÃ y trá»±c tiáº¿p Entity ra ngoÃ i.
+2.
+     
+Quáº£n lÃ½ Giao dá»‹ch (Transaction Management):
+o
+
+CÃ¡c nghiá»‡p vá»¥: Ä‘áº·t vÃ© (CORE-06), há»§y vÃ© (CORE-09), duyá»‡t vÃ© (CORE-08) pháº£i Ä‘Æ°á»£c bá»c trong @Transactional.
+o
+
+Náº¿u má»™t bÆ°á»›c lá»—i, toÃ n bá»™ pháº£i 
+Rollback
+ Ä‘á»ƒ trÃ¡nh rÃ¡c dá»¯ liá»‡u (gháº¿ bá»‹ treo, vÃ© khÃ´ng cÃ³ gháº¿â€¦).
+3.
+     
+TiÃªu chÃ­ Ä‘Ã¡nh giÃ¡:
+o
+
+HoÃ n thÃ nh Ä‘áº§y Ä‘á»§ cÃ¡c luá»“ng CORE (01 â†’ 09), code sáº¡ch sáº½, Ä‘Ãºng kiáº¿n trÃºc:
+ â†’ Äiá»ƒm KhÃ¡.
+o
+
+HoÃ n thÃ nh CORE + TÃ­ch há»£p thÃ nh cÃ´ng 1 HÆ°á»›ng Má»Ÿ rá»™ng (má»¥c 4):
+ â†’ Äiá»ƒm Giá»i.
+o
+
+Giao diá»‡n thÃ¢n thiá»‡n, xá»­ lÃ½ validation (cáº£ Client-side láº«n Server-side), cáº¥u trÃºc code OOP cháº·t cháº½, cÃ³ exception handling táº­p trung, chá»‘ng Ä‘áº·t trÃ¹ng gháº¿ hiá»‡u quáº£:
+ â†’ Äiá»ƒm Xuáº¥t sáº¯c.
