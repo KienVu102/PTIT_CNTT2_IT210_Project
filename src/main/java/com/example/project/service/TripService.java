@@ -15,6 +15,10 @@ import com.example.project.repository.SeatRepository;
 import com.example.project.repository.TicketRepository;
 import com.example.project.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,14 +43,22 @@ public class TripService {
     public List<TripSearchDTO> searchTrips(Long fromId, Long toId, LocalDate date) {
         LocalDateTime start = date.atStartOfDay();
         LocalDateTime end = date.plusDays(1).atStartOfDay();
+        LocalDateTime now = LocalDateTime.now();
         List<Trip> trips = tripRepository.findTrips(fromId, toId, start, end);
-        return trips.stream().map(this::convertToSearchDTO).collect(Collectors.toList());
+        return trips.stream()
+                .filter(t -> t.getDepartureTime().isAfter(now))
+                .map(this::convertToSearchDTO)
+                .collect(Collectors.toList());
     }
 
     // Huong 3 Mo rong: tim tat ca khung gio cua 1 tuyen duong
     public List<TripSearchDTO> searchTripsByRoute(Long fromId, Long toId) {
+        LocalDateTime now = LocalDateTime.now();
         List<Trip> trips = tripRepository.findTripsByRoute(fromId, toId);
-        return trips.stream().map(this::convertToSearchDTO).collect(Collectors.toList());
+        return trips.stream()
+                .filter(t -> t.getDepartureTime().isAfter(now))
+                .map(this::convertToSearchDTO)
+                .collect(Collectors.toList());
     }
 
     public List<TripSearchDTO> getAllTrips() {
@@ -60,15 +72,27 @@ public class TripService {
                 .collect(Collectors.toList());
     }
 
+    public Page<TripSearchDTO> getPaginatedTrips(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return tripRepository.findAll(pageable).map(this::convertToSearchDTO);
+    }
+
     @Transactional
     public void createTrip(TripDTO dto) {
         Route route = resolveRoute(dto);
         Bus bus = resolveBus(dto.getBusId());
+        LocalDateTime departureTime = validateDepartureTime(dto.getDepartureTime());
+        
+        if (departureTime.isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Không thể tạo chuyến xe với thời gian khởi hành trong quá khứ");
+        }
+        
+        validateBusDepartureConflict(bus.getId(), departureTime, null);
 
         Trip trip = new Trip();
         trip.setRoute(route);
         trip.setBus(bus);
-        trip.setDepartureTime(dto.getDepartureTime());
+        trip.setDepartureTime(departureTime);
         trip.setPrice(dto.getPrice());
 
         Trip savedTrip = tripRepository.save(trip);
@@ -83,6 +107,9 @@ public class TripService {
 
     @Transactional
     public void deleteTrip(Long id) {
+        if (ticketRepository.existsByTrip_Id(id)) {
+            throw new RuntimeException("Chuyến xe này đã có vé, không thể xóa!");
+        }
         List<Seat> seats = seatRepository.findByTripId(id);
         seatRepository.deleteAll(seats);
         tripRepository.deleteById(id);
@@ -97,6 +124,7 @@ public class TripService {
 
         Route newRoute = resolveRouteForUpdate(dto, trip, hasTickets);
         Bus newBus = resolveBusForUpdate(dto, trip, hasTickets);
+        LocalDateTime departureTime = validateDepartureTime(dto.getDepartureTime());
 
         boolean routeChanged = trip.getRoute() == null || !trip.getRoute().getId().equals(newRoute.getId());
         boolean busChanged = trip.getBus() == null || !trip.getBus().getId().equals(newBus.getId());
@@ -105,9 +133,11 @@ public class TripService {
             throw new RuntimeException("Chuyen xe da co ve. Chi duoc sua thoi gian khoi hanh va gia ve.");
         }
 
+        validateBusDepartureConflict(newBus.getId(), departureTime, tripId);
+
         trip.setRoute(newRoute);
         trip.setBus(newBus);
-        trip.setDepartureTime(dto.getDepartureTime());
+        trip.setDepartureTime(departureTime);
         trip.setPrice(dto.getPrice());
 
         Trip saved = tripRepository.save(trip);
@@ -195,6 +225,23 @@ public class TripService {
                 .orElseThrow(() -> new RuntimeException("Khong tim thay xe"));
     }
 
+    private LocalDateTime validateDepartureTime(LocalDateTime departureTime) {
+        if (departureTime == null) {
+            throw new RuntimeException("Vui long chon thoi gian khoi hanh");
+        }
+        return departureTime;
+    }
+
+    private void validateBusDepartureConflict(Long busId, LocalDateTime departureTime, Long excludedTripId) {
+        boolean conflict = (excludedTripId == null)
+                ? tripRepository.existsByBus_IdAndDepartureTime(busId, departureTime)
+                : tripRepository.existsByBus_IdAndDepartureTimeAndIdNot(busId, departureTime, excludedTripId);
+
+        if (conflict) {
+            throw new RuntimeException("Xe da co chuyen trung khung gio trong ngay nay. Vui long chon gio khac hoac xe khac.");
+        }
+    }
+
     private TripSearchDTO convertToSearchDTO(Trip trip) {
         long available = seatRepository.findByTripId(trip.getId())
                 .stream()
@@ -211,5 +258,22 @@ public class TripService {
                 trip.getBus().getBusType(),
                 (int) available
         );
+    }
+
+    /**
+     * Tự động xóa các chuyến xe đã qua thời gian khởi hành.
+     * Chạy mỗi 30 phút. Chỉ xóa chuyến xe chưa có vé nào được đặt.
+     */
+    @Transactional
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 1800000) // 30 phút
+    public void cleanupExpiredTrips() {
+        List<Trip> expiredTrips = tripRepository.findByDepartureTimeBefore(LocalDateTime.now());
+        for (Trip trip : expiredTrips) {
+            if (!ticketRepository.existsByTrip_Id(trip.getId())) {
+                List<Seat> seats = seatRepository.findByTripId(trip.getId());
+                seatRepository.deleteAll(seats);
+                tripRepository.delete(trip);
+            }
+        }
     }
 }

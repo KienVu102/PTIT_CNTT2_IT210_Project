@@ -1,28 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tìm chuyến xe - Bus Ticket Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        .search-header { background: linear-gradient(135deg, #0d6efd, #0dcaf0); color: white; padding: 40px 0; }
-        .trip-card { border: none; border-radius: 12px; transition: all 0.3s ease; }
-        .trip-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .badge-available { background-color: #198754 !important; }
-        .route-arrow { color: #0d6efd; font-size: 1.2rem; }
-        .price-text { color: #dc3545; font-weight: 700; font-size: 1.2rem; }
-        .seat-badge { font-size: 0.85rem; }
-        .empty-state { padding: 60px 0; text-align: center; }
-        .bus-icon { font-size: 2.5rem; color: #0d6efd; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/unified-ui.css}">
 </head>
-<body class="bg-light">
+<body class="page-shell">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="site-nav navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-bus-front"></i> Bus Ticket Pro</a>
+        <a class="navbar-brand" href="/"><i class="bi bi-bus-front"></i> Bus Ticket Pro</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -37,13 +27,24 @@
                     <a class="nav-link" href="/auth/login"><i class="bi bi-box-arrow-in-right"></i> Đăng nhập</a>
                 </li>
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> <span sec:authentication="name"></span></a>
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> <span sec:authentication="name"></span>
+                    </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-speedometer2"></i> Admin</a></li>
-                        <li sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="dropdown-item" href="/staff/pending-tickets"><i class="bi bi-clipboard-check"></i> Duyệt vé</a></li>
+                        <li><a class="dropdown-item" href="/tickets/search"><i class="bi bi-ticket-perforated"></i> Tra cứu vé</a></li>
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a class="dropdown-item" href="/admin/reports"><i class="bi bi-speedometer2"></i> Admin</a>
+                        </li>
+                        <li sec:authorize="hasAnyRole('STAFF','ADMIN')">
+                            <a class="dropdown-item" href="/staff/pending-tickets"><i class="bi bi-clipboard-check"></i> Duyệt vé</a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><form th:action="@{/auth/logout}" method="post" style="margin:0;"><button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></form></li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -51,112 +52,120 @@
     </div>
 </nav>
 
-<div class="search-header">
+<main class="app-main">
     <div class="container">
-        <h3 class="fw-bold mb-4"><i class="bi bi-search"></i> Tìm kiếm chuyến xe</h3>
-        <form th:action="@{/trips/search}" method="get" class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Điểm đi</label>
-                <select class="form-select" name="fromId" required>
-                    <option value="">Chọn điểm đi</option>
-                    <option th:each="loc : ${locations}" th:value="${loc.id}" th:text="${loc.name}" th:selected="${loc.id == fromId}"></option>
-                </select>
+        <section class="hero-panel">
+            <h1><i class="bi bi-search"></i> Tìm kiếm chuyến xe</h1>
+            <p>Chọn điểm đi, điểm đến và ngày khởi hành để nhận danh sách chuyến phù hợp.</p>
+            <form th:action="@{/trips/search}" method="get" class="smart-form row g-3 align-items-end">
+                <div class="col-lg-3 col-md-6 smart-field">
+                    <label class="form-label">Điểm đi</label>
+                    <select class="form-select" name="fromId" required>
+                        <option value="">Chọn điểm đi</option>
+                        <option th:each="loc : ${locations}" th:value="${loc.id}" th:text="${loc.name}" th:selected="${loc.id == fromId}"></option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6 smart-field">
+                    <label class="form-label">Điểm đến</label>
+                    <select class="form-select" name="toId" required>
+                        <option value="">Chọn điểm đến</option>
+                        <option th:each="loc : ${locations}" th:value="${loc.id}" th:text="${loc.name}" th:selected="${loc.id == toId}"></option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6 smart-field">
+                    <label class="form-label">Ngày khởi hành (tùy chọn)</label>
+                    <input type="date" class="form-control" name="date" th:value="${date}">
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <button type="submit" class="btn btn-smart-neutral w-100">
+                        <i class="bi bi-search"></i> Tìm kiếm
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <div class="mt-4" th:if="${error}">
+            <div class="alert alert-danger smart-alert mb-0">
+                <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
             </div>
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Điểm đến</label>
-                <select class="form-select" name="toId" required>
-                    <option value="">Chọn điểm đến</option>
-                    <option th:each="loc : ${locations}" th:value="${loc.id}" th:text="${loc.name}" th:selected="${loc.id == toId}"></option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Ngày khởi hành <span class="text-muted small">(tùy chọn)</span></label>
-                <input type="date" class="form-control" name="date" th:value="${date}">
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-light w-100 fw-semibold"><i class="bi bi-search"></i> Tìm kiếm</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="container py-5">
-
-    <div th:if="${error}" class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span></div>
-
-    <!-- Empty search state -->
-    <div th:if="${trips == null}" class="empty-state">
-        <div class="bus-icon mb-3"><i class="bi bi-bus-front"></i></div>
-        <h5 class="text-muted">Vui lòng chọn điểm đi và điểm đến để tìm chuyến xe</h5>
-        <p class="text-muted">Bạn có thể chọn ngày khởi hành cụ thể hoặc bỏ qua để xem tất cả chuyến xe của tuyến đó ở các khung giờ khác nhau.</p>
-    </div>
-
-    <!-- No results -->
-    <div th:if="${trips != null and trips.isEmpty()}" class="empty-state">
-        <div class="bus-icon mb-3 text-secondary"><i class="bi bi-emoji-frown"></i></div>
-        <h5 class="text-muted">Không tìm thấy chuyến xe phù hợp</h5>
-        <p class="text-muted">Vui lòng thử lại với ngày hoặc tuyến đường khác.</p>
-        <a href="/trips/search" class="btn btn-primary"><i class="bi bi-arrow-counterclockwise"></i> Tìm lại</a>
-    </div>
-
-    <!-- Results -->
-    <div th:if="${trips != null and !trips.isEmpty()}">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold mb-0"><i class="bi bi-list-ul"></i> Kết quả tìm kiếm</h5>
-            <span class="text-muted small" th:text="'Tìm thấy ' + ${trips.size()} + ' chuyến xe'"></span>
         </div>
-        <div class="row g-3">
-            <div class="col-12" th:each="trip : ${trips}">
-                <div class="card trip-card shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <div class="col-lg-3 col-md-4 mb-3 mb-md-0">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2 me-3">
-                                        <i class="bi bi-bus-front fs-3"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold" th:text="${trip.busType}"></div>
-                                        <small class="text-muted" th:text="${trip.plateNumber}"></small>
-                                    </div>
+
+        <section class="mt-4 smart-panel" th:if="${trips == null}">
+            <div class="empty-state">
+                <span class="icon"><i class="bi bi-bus-front"></i></span>
+                <h5 class="mb-2">Vui lòng chọn điểm đi và điểm đến để tìm chuyến xe</h5>
+                <p class="mb-0">Bạn có thể thêm ngày khởi hành hoặc bỏ qua để xem tất cả chuyến của tuyến đó.</p>
+            </div>
+        </section>
+
+        <section class="mt-4 smart-panel" th:if="${trips != null and trips.isEmpty()}">
+            <div class="empty-state">
+                <span class="icon"><i class="bi bi-emoji-frown"></i></span>
+                <h5 class="mb-2">Không tìm thấy chuyến xe phù hợp</h5>
+                <p class="mb-3">Vui lòng thử lại với ngày khác hoặc tuyến khác.</p>
+                <a href="/trips/search" class="btn btn-smart-primary">
+                    <i class="bi bi-arrow-clockwise"></i> Tìm lại
+                </a>
+            </div>
+        </section>
+
+        <section class="mt-4" th:if="${trips != null and !trips.isEmpty()}">
+            <div class="results-header">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-list-ul"></i> Kết quả tìm kiếm</h5>
+                <span class="results-count" th:text="'Tìm thấy ' + ${trips.size()} + ' chuyến xe'"></span>
+            </div>
+            <div class="trip-list">
+                <article class="trip-item" th:each="trip : ${trips}">
+                    <div class="row align-items-center g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="trip-bus-meta">
+                                <span class="bus-icon"><i class="bi bi-bus-front"></i></span>
+                                <div>
+                                    <div class="fw-bold" th:text="${trip.busType}"></div>
+                                    <small class="text-muted" th:text="${trip.plateNumber}"></small>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 mb-3 mb-md-0 text-center text-md-start">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
-                                    <div class="text-center me-3">
-                                        <div class="fw-bold fs-5" th:text="${#temporals.format(trip.departureTime, 'HH:mm')}"></div>
-                                        <small class="text-muted" th:text="${trip.fromLocation}"></small>
-                                    </div>
-                                    <div class="px-2">
-                                        <div class="route-arrow"><i class="bi bi-arrow-right"></i></div>
-                                        <small class="text-muted" th:text="${#temporals.format(trip.departureTime, 'dd/MM/yyyy')}"></small>
-                                    </div>
-                                    <div class="text-center ms-3">
-                                        <div class="fw-bold fs-5 text-muted">--:--</div>
-                                        <small class="text-muted" th:text="${trip.toLocation}"></small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 mb-3 mb-md-0 text-center">
-                                <span class="badge badge-available seat-badge mb-1"><i class="bi bi-check-circle"></i> <span th:text="${trip.availableSeats} + ' ghế trống'"></span></span>
-                                <div class="price-text" th:text="${#numbers.formatInteger(trip.price, 3, 'COMMA')} + ' đ'"></div>
-                            </div>
-                            <div class="col-lg-2 col-md-12 text-center text-lg-end">
-                                <a th:href="@{/tickets/book(tripId=${trip.id})}" class="btn btn-primary fw-semibold w-100">
-                                    <i class="bi bi-ticket-perforated"></i> Đặt vé
-                                </a>
                             </div>
                         </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="trip-route">
+                                <div class="trip-point">
+                                    <div class="time" th:text="${#temporals.format(trip.departureTime, 'HH:mm')}"></div>
+                                    <div class="label" th:text="${trip.fromLocation}"></div>
+                                </div>
+                                <div class="trip-arrow text-center">
+                                    <div><i class="bi bi-arrow-right"></i></div>
+                                    <small th:text="${#temporals.format(trip.departureTime, 'dd/MM/yyyy')}"></small>
+                                </div>
+                                <div class="trip-point">
+                                    <div class="time text-muted">--:--</div>
+                                    <div class="label" th:text="${trip.toLocation}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 text-lg-center">
+                            <div>
+                                <span class="seat-chip">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span th:text="${trip.availableSeats} + ' ghế trống'"></span>
+                                </span>
+                            </div>
+                            <div class="trip-price mt-1" th:text="${#numbers.formatInteger(trip.price, 3, 'COMMA')} + ' đ'"></div>
+                        </div>
+                        <div class="col-lg-2 col-md-6 text-lg-end">
+                            <a th:href="@{/tickets/book(tripId=${trip.id})}" class="btn btn-smart-primary w-100">
+                                <i class="bi bi-ticket-perforated"></i> Đặt vé
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </article>
             </div>
-        </div>
+        </section>
     </div>
-</div>
+</main>
 
-<footer class="bg-dark text-white py-4 mt-auto">
+<footer class="app-footer">
     <div class="container text-center">
-        <p class="mb-0"><i class="bi bi-bus-front"></i> Bus Ticket Pro &copy; 2026</p>
+        <p><i class="bi bi-bus-front"></i> Bus Ticket Pro &copy; 2026</p>
     </div>
 </footer>
 

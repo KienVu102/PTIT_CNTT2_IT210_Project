@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminReportController {
     private final TicketRepository ticketRepository;
     @GetMapping
-    public String showReport(Model model) {
+    public String showReport(@org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page, Model model) {
         Double revenue = ticketRepository.getTotalRevenue();
         model.addAttribute("revenue", revenue != null ? revenue : 0.0);
         model.addAttribute("paidCount", ticketRepository.countByStatus(TicketStatus.PAID));
         model.addAttribute("pendingCount", ticketRepository.countByStatus(TicketStatus.PENDING));
         model.addAttribute("cancelledCount", ticketRepository.countByStatus(TicketStatus.CANCELLED));
         model.addAttribute("topRoutes", ticketRepository.getTopRoutes());
+        
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 5);
+        model.addAttribute("ticketPage", ticketRepository.findAllByOrderByBookingTimeDesc(pageable));
+        
         return "admin/report";
     }
 }

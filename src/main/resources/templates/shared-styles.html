@@ -1,0 +1,303 @@
+<!-- Shared CSS Template for Modern Design -->
+<style>
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --accent-color: #f093fb;
+        --dark-bg: #1a1a2e;
+        --light-bg: #f8f9fa;
+        --text-dark: #2d3436;
+        --text-light: #636e72;
+        --border-radius: 20px;
+        --shadow-sm: 0 2px 15px rgba(0,0,0,0.08);
+        --shadow-md: 0 5px 25px rgba(0,0,0,0.1);
+        --shadow-lg: 0 15px 35px rgba(0,0,0,0.15);
+        --shadow-xl: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: var(--text-dark);
+        overflow-x: hidden;
+        background: var(--light-bg);
+    }
+
+    /* Modern Navbar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(20px);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        padding: 1rem 0;
+    }
+
+    .navbar-brand {
+        font-weight: 800;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+        transform: scale(1.05);
+    }
+
+    .nav-link {
+        font-weight: 600;
+        color: var(--text-dark) !important;
+        margin: 0 0.5rem;
+        padding: 0.5rem 1rem !important;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .nav-link:hover {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white !important;
+        transform: translateY(-2px);
+    }
+
+    .nav-link.active {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white !important;
+    }
+
+    /* Modern Cards */
+    .modern-card {
+        background: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        transition: all 0.4s ease;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modern-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Modern Buttons */
+    .btn-modern {
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-md);
+        border: none;
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .btn-primary-modern:hover {
+        color: white;
+    }
+
+    .btn-success-modern {
+        background: linear-gradient(135deg, #00b894, #00cec9);
+        color: white;
+    }
+
+    .btn-success-modern:hover {
+        color: white;
+    }
+
+    .btn-danger-modern {
+        background: linear-gradient(135deg, #e17055, #d63031);
+        color: white;
+    }
+
+    .btn-danger-modern:hover {
+        color: white;
+    }
+
+    /* Modern Forms */
+    .form-modern {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .form-label-modern {
+        color: var(--text-light);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-control-modern, .form-select-modern {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-control-modern:focus, .form-select-modern:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
+
+    /* Modern Tables */
+    .table-modern {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .table-modern thead {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .table-modern th {
+        border: none;
+        padding: 1rem;
+        font-weight: 700;
+    }
+
+    .table-modern td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table-modern tbody tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: scale(1.01);
+    }
+
+    /* Modern Footer */
+    .footer-modern {
+        background: var(--dark-bg);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-top: 5rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h6 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .footer-section a {
+        color: #b2bec3;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+        color: var(--primary-color);
+    }
+
+    /* Alert Modern */
+    .alert-modern {
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .alert-success-modern {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+    }
+
+    .alert-danger-modern {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+    }
+
+    .alert-warning-modern {
+        background: linear-gradient(135deg, #fff3cd, #ffeeba);
+        color: #856404;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .modern-card {
+            padding: 1.5rem;
+        }
+        
+        .form-modern {
+            padding: 1.5rem;
+        }
+        
+        .btn-modern {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Loading Animation */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+</style>

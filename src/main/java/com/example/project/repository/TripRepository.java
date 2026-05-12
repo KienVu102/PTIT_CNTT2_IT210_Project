@@ -10,7 +10,13 @@ import java.util.List;
 
 public interface TripRepository extends JpaRepository<Trip, Long> {
 
-    // CORE-05: Tìm kiếm chuyến xe theo điểm đi, đến, ngày
+    boolean existsByBus_Id(Long busId);
+
+    boolean existsByBus_IdAndDepartureTime(Long busId, LocalDateTime departureTime);
+
+    boolean existsByBus_IdAndDepartureTimeAndIdNot(Long busId, LocalDateTime departureTime, Long id);
+
+    // CORE-05: Tim kiem chuyen xe theo diem di, den, ngay
     @Query("SELECT t FROM Trip t " +
            "JOIN FETCH t.route r " +
            "JOIN FETCH r.fromLocation fl " +
@@ -24,7 +30,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
                          @Param("startOfDay") LocalDateTime startOfDay,
                          @Param("endOfDay") LocalDateTime endOfDay);
 
-    // Hướng 3 Mở rộng: Tìm kiếm chuyến xe theo tuyến đường (không cần ngày) - cho phép linh hoạt lựa chọn các khung giờ khác nhau
+    // Huong 3 Mo rong: Tim kiem chuyen xe theo tuyen duong (khong can ngay)
     @Query("SELECT t FROM Trip t " +
            "JOIN FETCH t.route r " +
            "JOIN FETCH r.fromLocation fl " +
@@ -34,4 +40,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
            "ORDER BY t.departureTime ASC")
     List<Trip> findTripsByRoute(@Param("fromId") Long fromId,
                                 @Param("toId") Long toId);
+
+    // Tìm các chuyến xe đã qua thời gian khởi hành
+    List<Trip> findByDepartureTimeBefore(LocalDateTime dateTime);
 }

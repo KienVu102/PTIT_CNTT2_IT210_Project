@@ -26,6 +26,7 @@
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> <span sec:authentication="name"></span></a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
+                        <li><a class="dropdown-item" href="/tickets/search"><i class="bi bi-ticket-perforated"></i> Tra cứu vé</a></li>
                         <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-speedometer2"></i> Admin</a></li>
                         <li sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="dropdown-item" href="/staff/pending-tickets"><i class="bi bi-clipboard-check"></i> Duyệt vé</a></li>
                         <li><hr class="dropdown-divider"></li>

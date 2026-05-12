@@ -6,28 +6,267 @@
     <title>Đặt vé - Bus Ticket Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
-        .seat-map { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 320px; margin: 0 auto; }
-        .seat { padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600; border: 2px solid transparent; transition: all 0.2s; }
-        .seat-available { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
-        .seat-available:hover { background: #c8e6c9; transform: scale(1.05); }
-        .seat-pending { background: #fff3e0; color: #ef6c00; border-color: #ffcc80; cursor: not-allowed; opacity: 0.8; }
-        .seat-booked { background: #ffebee; color: #c62828; border-color: #ef9a9a; cursor: not-allowed; opacity: 0.6; }
-        .seat-selected { background: #0d6efd !important; color: white !important; border-color: #0b5ed7 !important; }
-        .seat-legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
-        .legend-box { width: 24px; height: 24px; border-radius: 6px; border: 2px solid; }
-        .trip-summary { background: #f8f9fa; border-radius: 12px; padding: 20px; }
-        .form-card { border: none; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --dark-bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --light-bg: #f8f9fa;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --vexere-yellow: #fcd34d;
+            --vexere-yellow-hover: #fbbf24;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #1e3a5f !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #fcd34d !important;
+        }
+        .nav-link {
+            font-weight: 600;
+            color: #ffffff !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #fcd34d !important;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .breadcrumb-item a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumb-item.active {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Seat Map */
+        .seat-map { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            max-width: 320px; 
+            margin: 0 auto; 
+        }
+        .seat { 
+            padding: 12px; 
+            border-radius: 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: 600; 
+            border: 2px solid transparent; 
+            transition: all 0.2s; 
+            font-size: 0.9rem;
+        }
+        .seat-available { 
+            background: #e8f5e9; 
+            color: #2e7d32; 
+            border-color: #a5d6a7; 
+        }
+        .seat-available:hover { 
+            background: #c8e6c9; 
+            transform: scale(1.05); 
+        }
+        .seat-pending { 
+            background: #fff3e0; 
+            color: #ef6c00; 
+            border-color: #ffcc80; 
+            cursor: not-allowed; 
+            opacity: 0.8; 
+        }
+        .seat-booked { 
+            background: #ffebee; 
+            color: #c62828; 
+            border-color: #ef9a9a; 
+            cursor: not-allowed; 
+            opacity: 0.6; 
+        }
+        .seat-selected { 
+            background: var(--primary-color) !important; 
+            color: white !important; 
+            border-color: var(--secondary-color) !important; 
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .seat-legend { 
+            display: flex; 
+            gap: 16px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            margin-top: 16px; 
+        }
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            font-size: 0.9rem; 
+            color: var(--text-dark);
+        }
+        .legend-box { 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 6px; 
+            border: 2px solid; 
+        }
+
+        /* Cards */
+        .form-card { 
+            border: none; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        .card-header {
+            border: none;
+            padding: 1.25rem;
+            font-weight: 700;
+        }
+        .card-header.bg-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+        }
+        .card-header.bg-success {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+        }
+
+        /* Trip Summary */
+        .trip-summary { 
+            background: var(--light-bg); 
+            border-radius: 12px; 
+            padding: 20px; 
+            border: 1px solid #e2e8f0;
+        }
+        .trip-summary .d-flex {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .trip-summary .d-flex:last-child {
+            border-bottom: none;
+        }
+
+        /* Form Controls */
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-outline-secondary {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        /* Alerts */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .alert-info {
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            color: #0c4a6e;
+        }
+
+        /* Footer */
+        footer {
+            background: #000000;
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .seat-map {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 240px;
+            }
+            .form-card {
+                margin-bottom: 1rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-bus-front"></i> Bus Ticket Pro</a>
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-bus-front me-2"></i> Bus Ticket Pro
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto">
@@ -41,10 +280,11 @@
                 </li>
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> <span sec:authentication="name"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-speedometer2"></i> Admin</a></li>
-                        <li sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="dropdown-item" href="/staff/pending-tickets"><i class="bi bi-clipboard-check"></i> Duyệt vé</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="background: var(--card-bg);">
+                        <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i> Hồ sơ</a></li>
+                        <li><a class="dropdown-item" href="/tickets/search"><i class="bi bi-ticket-perforated me-2"></i> Tra cứu vé</a></li>
+                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-speedometer2 me-2"></i> Admin</a></li>
+                        <li sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="dropdown-item" href="/staff/pending-tickets"><i class="bi bi-clipboard-check me-2"></i> Duyệt vé</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><form th:action="@{/auth/logout}" method="post" style="margin:0;"><button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></form></li>
                     </ul>
@@ -54,22 +294,24 @@
     </div>
 </nav>
 
-<div class="container py-5">
-    <nav aria-label="breadcrumb" class="mb-3">
+<main class="container py-5" data-aos="fade-up">
+    <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/trips/search">Tìm chuyến xe</a></li>
-            <li class="breadcrumb-item active">Đặt vé</li>
+            <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door me-1"></i>Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/trips/search"><i class="bi bi-search me-1"></i>Tìm chuyến xe</a></li>
+            <li class="breadcrumb-item active"><i class="bi bi-pencil-square me-1"></i>Đặt vé</li>
         </ol>
     </nav>
 
-    <div th:if="${error}" class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span></div>
+    <div th:if="${error}" class="alert alert-danger mb-4" data-aos="fade-down">
+        <i class="bi bi-exclamation-triangle me-2"></i> <span th:text="${error}"></span>
+    </div>
 
     <div class="row g-4" th:if="${trip != null}">
-        <div class="col-lg-5">
+        <div class="col-lg-5" data-aos="fade-right" data-aos-delay="100">
             <div class="card form-card h-100">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Thông tin chuyến xe</h5>
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Thông tin chuyến xe</h5>
                 </div>
                 <div class="card-body">
                     <div class="trip-summary mb-3">
@@ -95,7 +337,7 @@
                         </div>
                     </div>
                     <hr>
-                    <h6 class="fw-bold mb-3"><i class="bi bi-grid-3x3"></i> Sơ đồ ghế</h6>
+                    <h6 class="fw-bold mb-3"><i class="bi bi-grid-3x3 me-2"></i>Sơ đồ ghế</h6>
                     <div class="seat-map" id="seatMap">
                         <div th:each="seat : ${seats}"
                              th:class="'seat ' + (${seat.status.name() == 'AVAILABLE'} ? 'seat-available' : (${seat.status.name() == 'PENDING'} ? 'seat-pending' : 'seat-booked'))"
@@ -115,10 +357,10 @@
             </div>
         </div>
 
-        <div class="col-lg-7">
+        <div class="col-lg-7" data-aos="fade-left" data-aos-delay="200">
             <div class="card form-card h-100">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Thông tin hành khách</h5>
+                    <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Thông tin hành khách</h5>
                 </div>
                 <div class="card-body">
                     <form th:action="@{/tickets/book}" th:object="${bookingDTO}" method="post" id="bookingForm" novalidate>
@@ -149,31 +391,41 @@
                             <div class="form-text text-muted">Email dùng để gửi xác nhận vé (không bắt buộc).</div>
                         </div>
 
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> Sau khi đặt vé, bạn có <strong>30 phút</strong> để thanh toán tại quầy. Vé sẽ tự động hủy nếu quá hạn.
+                        <div class="alert alert-info" data-aos="fade-up">
+                            <i class="bi bi-info-circle me-2"></i> Sau khi đặt vé, bạn có <strong>30 phút</strong> để thanh toán tại quầy. Vé sẽ tự động hủy nếu quá hạn.
                         </div>
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-3" data-aos="fade-up">
                             <button type="submit" class="btn btn-primary fw-semibold flex-grow-1" id="btnBook">
-                                <i class="bi bi-check-circle"></i> Xác nhận đặt vé
+                                <i class="bi bi-check-circle me-2"></i> Xác nhận đặt vé
                             </button>
-                            <a href="/trips/search" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                            <a href="/trips/search" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i> Quay lại
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<footer class="bg-dark text-white py-4 mt-auto">
+<footer>
     <div class="container text-center">
-        <p class="mb-0"><i class="bi bi-bus-front"></i> Bus Ticket Pro &copy; 2026</p>
+        <p class="mb-0"><i class="bi bi-bus-front me-2"></i> Bus Ticket Pro &copy; 2026</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50
+        });
+    });
     function selectSeat(el) {
         const status = el.getAttribute('data-status');
         if (status !== 'AVAILABLE') return;

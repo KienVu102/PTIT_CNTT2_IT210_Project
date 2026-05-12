@@ -2,117 +2,298 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - Bus Ticket Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            --brand-primary: #fcd34d;
+            --brand-primary-dk: #fbbf24;
+            --ui-bg: #f1f5f9;
+            --ui-surface: #ffffff;
+            --ui-border: #e2e8f0;
+            --ui-text: #0f172a;
+            --ui-text-muted: #64748b;
+            --r-lg: 16px;
+            --r-md: 12px;
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--ui-bg);
+            color: var(--ui-text);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 12px;
+        }
+
+        .auth-shell {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .auth-card {
+            background: var(--ui-surface);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--r-lg);
+            padding: 40px 32px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--brand-primary-dk);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .auth-title {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--ui-text);
+        }
+
+        .auth-subtitle {
+            margin-top: 8px;
+            color: var(--ui-text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--ui-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .input-group-text {
+            background: #f8fafc;
+            border: 2px solid var(--ui-border);
+            border-right: none;
+            color: var(--ui-text-muted);
+            border-radius: 10px 0 0 10px;
+        }
+
+        .form-control {
+            border: 2px solid var(--ui-border);
+            border-radius: 0 10px 10px 0;
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--brand-primary);
+            box-shadow: none;
+            background: #fff;
+        }
+
+        .btn-auth {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dk));
+            color: #000;
+            font-weight: 700;
+            padding: 14px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(252, 211, 77, 0.3);
+            margin-top: 8px;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 211, 77, 0.4);
+            color: #000;
+        }
+
         .error-message {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            display: block;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #ef4444;
+            font-weight: 500;
+            display: none;
         }
-        .form-control.is-invalid {
-            border-color: #dc3545;
-            background-image: none;
+
+        .is-invalid {
+            border-color: #ef4444 !important;
         }
-        .form-control.is-invalid:focus {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+
+        .helper-box {
+            margin-top: 24px;
+            border-radius: var(--r-md);
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 12px 16px;
+            color: #92400e;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .auth-footer {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--ui-text-muted);
+            font-size: 0.95rem;
+        }
+
+        .auth-footer a {
+            color: var(--ui-text);
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px solid var(--brand-primary);
+            padding-bottom: 2px;
+            transition: all 0.2s;
+        }
+
+        .auth-footer a:hover {
+            background: var(--brand-primary);
+            color: #000;
         }
     </style>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white text-center">
-                    <h4>Bus Ticket Pro - Đăng nhập</h4>
-                </div>
-                <div class="card-body">
-                    <div th:if="${param.error}" class="alert alert-danger">Sai tên đăng nhập hoặc mật khẩu!</div>
-                    <div th:if="${param.logout}" class="alert alert-info">Đã đăng xuất thành công.</div>
-                    <div th:if="${param.registered}" class="alert alert-success">Đăng ký thành công! Hãy đăng nhập.</div>
-                    <form th:action="@{/auth/login}" method="post" id="loginForm" novalidate>
-                        <div class="mb-3">
-                            <label class="form-label">Tên đăng nhập</label>
-                            <input type="text" name="username" class="form-control" id="username" autofocus>
-                            <div class="error-message" id="username-error" style="display: none;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Mật khẩu</label>
-                            <input type="password" name="password" class="form-control" id="password">
-                            <div class="error-message" id="password-error" style="display: none;"></div>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
-                    </form>
-                    <hr>
-                    <div class="text-center">
-                        <small>Chưa có tài khoản? <a th:href="@{/auth/register}">Đăng ký ngay</a></small><br>
-                        <small class="text-muted">Demo: admin | staff1 | user1 | user2 / password</small>
-                    </div>
-                </div>
+<body>
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="bi bi-bus-front"></i>
             </div>
+            <h1 class="auth-title">Đăng nhập</h1>
+            <p class="auth-subtitle">Chào mừng bạn quay lại với Bus Ticket Pro</p>
+        </div>
+
+        <div th:if="${param.error}" class="alert alert-danger py-2 px-3 small">
+            Sai tên đăng nhập hoặc mật khẩu.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-info py-2 px-3 small">
+            Bạn đã đăng xuất.
+        </div>
+        <div th:if="${param.registered}" class="alert alert-success py-2 px-3 small">
+            Đăng ký thành công. Mời đăng nhập.
+        </div>
+
+        <form th:action="@{/auth/login}" method="post" id="loginForm" novalidate>
+            <div class="mb-3">
+                <label class="form-label" for="username">Tên đăng nhập</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        class="form-control"
+                        placeholder="Nhập tên đăng nhập"
+                        autocomplete="username"
+                        autofocus
+                    >
+                </div>
+                <div class="error-message" id="username-error"></div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label" for="password">Mật khẩu</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        class="form-control"
+                        placeholder="Nhập mật khẩu"
+                        autocomplete="current-password"
+                    >
+                </div>
+                <div class="error-message" id="password-error"></div>
+            </div>
+
+            <button type="submit" class="btn-auth">
+                Đăng nhập
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Chưa có tài khoản? <a th:href="@{/auth/register}">Đăng ký</a>
+        </div>
+
+        <div class="helper-box">
+            Tài khoản demo: admin | staff1 | user1 | user2 / password
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('loginForm');
-    
-    // Real-time validation
-    document.getElementById('username').addEventListener('input', validateUsername);
-    document.getElementById('password').addEventListener('input', validatePassword);
-    
-    function validateUsername() {
-        const field = document.getElementById('username');
-        const error = document.getElementById('username-error');
-        const value = field.value.trim();
-        
-        if (!value) {
-            showError(field, error, 'Tên đăng nhập không được để trống');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function validatePassword() {
-        const field = document.getElementById('password');
-        const error = document.getElementById('password-error');
-        const value = field.value;
-        
-        if (!value) {
-            showError(field, error, 'Mật khẩu không được để trống');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function showError(field, errorElement, message) {
-        field.classList.add('is-invalid');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-    }
-    
-    function clearError(field, errorElement) {
-        field.classList.remove('is-invalid');
-        errorElement.style.display = 'none';
-    }
-    
-    // Form submission validation
-    form.addEventListener('submit', function(e) {
-        validateUsername();
-        validatePassword();
-        
-        const invalidFields = form.querySelectorAll('.is-invalid');
-        if (invalidFields.length > 0) {
-            e.preventDefault();
-            invalidFields[0].focus();
-        }
-    });
-});
-</script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("loginForm");
+        const usernameField = document.getElementById("username");
+        const passwordField = document.getElementById("password");
 
+        function showError(field, errorElement, message) {
+            field.classList.add("is-invalid");
+            errorElement.textContent = message;
+            errorElement.style.display = "block";
+        }
+
+        function clearError(field, errorElement) {
+            field.classList.remove("is-invalid");
+            errorElement.style.display = "none";
+        }
+
+        function validateUsername() {
+            const value = usernameField.value.trim();
+            const error = document.getElementById("username-error");
+            if (!value) {
+                showError(usernameField, error, "Tên đăng nhập không được để trống");
+                return false;
+            }
+            clearError(usernameField, error);
+            return true;
+        }
+
+        function validatePassword() {
+            const value = passwordField.value;
+            const error = document.getElementById("password-error");
+            if (!value) {
+                showError(passwordField, error, "Mật khẩu không được để trống");
+                return false;
+            }
+            clearError(passwordField, error);
+            return true;
+        }
+
+        usernameField.addEventListener("input", validateUsername);
+        passwordField.addEventListener("input", validatePassword);
+
+        form.addEventListener("submit", function (e) {
+            const okUser = validateUsername();
+            const okPass = validatePassword();
+            if (!okUser || !okPass) {
+                e.preventDefault();
+                const invalid = form.querySelector(".is-invalid");
+                if (invalid) {
+                    invalid.focus();
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

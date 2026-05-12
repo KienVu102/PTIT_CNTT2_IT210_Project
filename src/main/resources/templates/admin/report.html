@@ -7,135 +7,322 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        .admin-sidebar { background: #212529; min-height: 100vh; }
-        .stat-card { border: none; border-radius: 12px; transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-3px); }
-        .chart-placeholder { height: 200px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 12px; }
+        :root {
+            --sidebar-bg: #1e293b;
+            --sidebar-active: #2563eb;
+            --sidebar-hover: #334155;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #1e293b;
+        }
+
+        /* Navbar Styling */
+        .navbar-admin {
+            background: #0f172a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 1.5rem;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Sidebar Styling */
+        .admin-sidebar {
+            background: var(--sidebar-bg);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+        }
+        .nav-link-admin {
+            color: #94a3b8;
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-link-admin:hover {
+            background: var(--sidebar-hover);
+            color: #f8fafc;
+        }
+        .nav-link-admin.active {
+            background: var(--sidebar-active);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            border: none;
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--card-shadow);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card .icon-bg {
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            font-size: 5rem;
+            opacity: 0.2;
+            transform: rotate(-15deg);
+        }
+        .stat-card.bg-revenue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .stat-card.bg-paid { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-card.bg-pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .stat-card.bg-cancelled { background: linear-gradient(135deg, #64748b, #475569); }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+        }
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+        .page-header h3 {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Table Styling */
+        .card-custom {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            background: white;
+        }
+        .table thead th {
+            background: #f1f5f9;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            padding: 1rem;
+        }
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-admin sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-bus-front"></i> Bus Ticket Pro</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i> <span sec:authentication="name"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                        <li><form th:action="@{/auth/logout}" method="post" style="margin:0;"><button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></form></li>
-                    </ul>
-                </li>
-            </ul>
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-bus-front"></i> <span>Bus Ticket Pro</span>
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+            <div class="dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle fs-5"></i>
+                    <span sec:authentication="name" class="fw-medium"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                    <li><a class="dropdown-item py-2" href="/profile"><i class="bi bi-person me-2"></i> Hồ sơ</a></li>
+                    <li><a class="dropdown-item py-2" href="/tickets/search"><i class="bi bi-ticket-perforated me-2"></i> Tra cứu vé</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/auth/logout}" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i> Đăng xuất</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 admin-sidebar text-white p-3 d-none d-md-block">
-            <h6 class="text-uppercase text-muted mb-3 mt-2">Quản trị</h6>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white active bg-primary rounded" href="/admin/reports"><i class="bi bi-graph-up"></i> Báo cáo</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/admin/trips"><i class="bi bi-calendar-event"></i> Chuyến xe</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/admin/buses"><i class="bi bi-bus-front"></i> Xe buýt</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/staff/pending-tickets"><i class="bi bi-clipboard-check"></i> Duyệt vé</a>
-                </li>
-            </ul>
+        <div class="col-md-2 admin-sidebar d-none d-md-block">
+            <h6 class="text-uppercase text-slate-400 fw-bold small mb-4 px-3" style="color: #64748b; letter-spacing: 1px;">Quản trị</h6>
+            <nav class="nav flex-column">
+                <a class="nav-link-admin active" href="/admin/reports">
+                    <i class="bi bi-graph-up"></i> Báo cáo
+                </a>
+                <a class="nav-link-admin" href="/admin/trips">
+                    <i class="bi bi-calendar-event"></i> Chuyến xe
+                </a>
+                <a class="nav-link-admin" href="/admin/buses">
+                    <i class="bi bi-bus-front"></i> Xe buýt
+                </a>
+                <a class="nav-link-admin" href="/staff/pending-tickets">
+                    <i class="bi bi-clipboard-check"></i> Duyệt vé
+                </a>
+            </nav>
         </div>
 
-        <div class="col-md-10 p-4">
-            <h3 class="fw-bold mb-4"><i class="bi bi-speedometer2"></i> Tổng quan hệ thống</h3>
+        <div class="col-md-10 main-content">
+            <div class="page-header">
+                <i class="bi bi-speedometer2 fs-2 text-primary"></i>
+                <h3 class="fw-bold">Tổng quan hệ thống</h3>
+            </div>
 
-            <div class="row g-4 mb-4">
+            <div class="row g-4 mb-5">
                 <div class="col-md-3">
-                    <div class="card stat-card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Doanh thu</h6>
-                                    <h4 class="mb-0" th:text="${#numbers.formatInteger(revenue, 3, 'COMMA')} + ' d'"></h4>
-                                </div>
-                                <i class="bi bi-cash-stack fs-1 opacity-50"></i>
-                            </div>
-                        </div>
+                    <div class="stat-card bg-revenue">
+                        <div class="icon-bg"><i class="bi bi-cash-stack"></i></div>
+                        <h6 class="text-uppercase small fw-bold opacity-75 mb-2">Doanh thu</h6>
+                        <h2 class="fw-bold mb-0" th:text="${#numbers.formatInteger(revenue, 3, 'COMMA')} + ' đ'"></h2>
+                        <i class="bi bi-arrow-up-right-circle position-absolute top-0 end-0 m-3 opacity-25"></i>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card stat-card bg-success text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Vé đã thanh toán</h6>
-                                    <h4 class="mb-0" th:text="${paidCount}"></h4>
-                                </div>
-                                <i class="bi bi-check-circle fs-1 opacity-50"></i>
-                            </div>
-                        </div>
+                    <div class="stat-card bg-paid">
+                        <div class="icon-bg"><i class="bi bi-check-circle"></i></div>
+                        <h6 class="text-uppercase small fw-bold opacity-75 mb-2">Vé đã thanh toán</h6>
+                        <h2 class="fw-bold mb-0" th:text="${paidCount}"></h2>
+                        <i class="bi bi-shield-check position-absolute top-0 end-0 m-3 opacity-25"></i>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card stat-card bg-warning text-dark">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Vé chờ thanh toán</h6>
-                                    <h4 class="mb-0" th:text="${pendingCount}"></h4>
-                                </div>
-                                <i class="bi bi-clock-history fs-1 opacity-50"></i>
-                            </div>
-                        </div>
+                    <div class="stat-card bg-pending">
+                        <div class="icon-bg"><i class="bi bi-clock-history"></i></div>
+                        <h6 class="text-uppercase small fw-bold opacity-75 mb-2">Vé chờ thanh toán</h6>
+                        <h2 class="fw-bold mb-0" th:text="${pendingCount}"></h2>
+                        <i class="bi bi-hourglass-split position-absolute top-0 end-0 m-3 opacity-25"></i>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card stat-card bg-secondary text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Vé đã hủy</h6>
-                                    <h4 class="mb-0" th:text="${cancelledCount}"></h4>
-                                </div>
-                                <i class="bi bi-x-circle fs-1 opacity-50"></i>
-                            </div>
-                        </div>
+                    <div class="stat-card bg-cancelled">
+                        <div class="icon-bg"><i class="bi bi-x-circle"></i></div>
+                        <h6 class="text-uppercase small fw-bold opacity-75 mb-2">Vé đã hủy</h6>
+                        <h2 class="fw-bold mb-0" th:text="${cancelledCount}"></h2>
+                        <i class="bi bi-trash3 position-absolute top-0 end-0 m-3 opacity-25"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-bold"><i class="bi bi-trophy"></i> Top tuyến đường được đặt nhiều nhất</div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Tuyến đường</th>
-                                    <th>Số vé đã bán</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="row, iter : ${topRoutes}">
-                                    <td><span class="badge bg-primary" th:text="${iter.count}"></span></td>
-                                    <td th:text="${row[0]} + ' → ' + ${row[1]}"></td>
-                                    <td><span class="fw-bold" th:text="${row[2]}"></span></td>
-                                </tr>
-                                <tr th:if="${topRoutes == null or topRoutes.isEmpty()}">
-                                    <td colspan="3" class="text-center text-muted">Chưa có dữ liệu</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <div class="row g-4">
+                <!-- Cột 1: Top tuyến đường -->
+                <div class="col-xl-6">
+                    <div class="card card-custom border-0 shadow-sm h-100 mb-0">
+                        <div class="card-header bg-white py-3 border-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-trophy text-warning fs-4"></i>
+                            <h5 class="fw-bold mb-0">Top tuyến đường đặt nhiều nhất</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4">Thứ hạng</th>
+                                            <th>Tuyến đường</th>
+                                            <th class="pe-4">Số vé</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="row, iter : ${topRoutes}">
+                                            <td class="ps-4">
+                                                <span th:class="'badge rounded-pill px-3 py-2 ' + (${iter.index == 0} ? 'bg-warning text-dark' : 'bg-light text-secondary')"
+                                                      th:text="${iter.count}"></span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi bi-geo-alt text-primary opacity-50"></i>
+                                                    <span class="fw-medium text-slate-700" th:text="${row[0]} + ' → ' + ${row[1]}"></span>
+                                                </div>
+                                            </td>
+                                            <td class="pe-4">
+                                                <span class="fw-bold text-primary" th:text="${row[2]}"></span>
+                                                <span class="text-muted small ms-1">vé</span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${topRoutes == null or topRoutes.isEmpty()}">
+                                            <td colspan="3" class="text-center text-muted py-5">
+                                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                                                Chưa có dữ liệu thống kê
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cột 2: Vé đặt gần đây -->
+                <div class="col-xl-6">
+                    <div class="card card-custom border-0 shadow-sm h-100 mb-0">
+                        <div class="card-header bg-white py-3 border-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-ticket-detailed text-success fs-4"></i>
+                            <h5 class="fw-bold mb-0">Khách đặt vé gần đây</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4">Mã vé</th>
+                                            <th>Ngày đặt</th>
+                                            <th>Tuyến đường</th>
+                                            <th class="pe-4 text-end">Giá vé</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="ticket : ${ticketPage.content}">
+                                            <td class="ps-4">
+                                                <span class="badge bg-light text-dark border fw-bold" th:text="${ticket.ticketCode}"></span>
+                                            </td>
+                                            <td>
+                                                <div class="text-slate-600 small">
+                                                    <i class="bi bi-clock me-1 opacity-50"></i>
+                                                    <span th:text="${#temporals.format(ticket.bookingTime, 'HH:mm dd/MM')}"></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="fw-medium text-slate-700 small" th:text="${ticket.trip.route.fromLocation.name} + ' → ' + ${ticket.trip.route.toLocation.name}"></div>
+                                            </td>
+                                            <td class="pe-4 text-end">
+                                                <span class="fw-bold text-success" th:text="${#numbers.formatInteger(ticket.totalPrice, 3, 'COMMA')} + ' đ'"></span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${ticketPage.content == null or ticketPage.content.isEmpty()}">
+                                            <td colspan="4" class="text-center text-muted py-5">
+                                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                                                Chưa có giao dịch nào
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-0 py-3" th:if="${ticketPage.totalPages > 1}">
+                            <ul class="pagination pagination-sm justify-content-end mb-0">
+                                <li class="page-item" th:classappend="${ticketPage.first ? 'disabled' : ''}">
+                                    <a class="page-link" th:href="@{/admin/reports(page=${ticketPage.number - 1})}"><i class="bi bi-chevron-left"></i></a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, ticketPage.totalPages - 1)}" th:classappend="${ticketPage.number == i ? 'active' : ''}">
+                                    <a class="page-link" th:href="@{/admin/reports(page=${i})}" th:text="${i + 1}"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${ticketPage.last ? 'disabled' : ''}">
+                                    <a class="page-link" th:href="@{/admin/reports(page=${ticketPage.number + 1})}"><i class="bi bi-chevron-right"></i></a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

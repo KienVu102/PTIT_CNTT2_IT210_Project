@@ -1,5 +1,6 @@
 package com.example.project.controller;
 import com.example.project.dto.TripDTO;
+import com.example.project.entity.Location;
 import com.example.project.repository.BusRepository;
 import com.example.project.repository.LocationRepository;
 import com.example.project.repository.RouteRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/trips")
@@ -22,9 +24,12 @@ public class AdminTripController {
     private final TripRepository tripRepository;
 
     @GetMapping
-    public String listTrips(Model model) {
+    public String listTrips(@RequestParam(defaultValue = "0") int page, Model model) {
         populateTripOptions(model);
-        model.addAttribute("trips", tripService.getAllTrips());
+        var tripPage = tripService.getPaginatedTrips(page, 5);
+        model.addAttribute("trips", tripPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", tripPage.getTotalPages());
         model.addAttribute("newTrip", new TripDTO());
         return "admin/trips";
     }
@@ -37,14 +42,21 @@ public class AdminTripController {
         } catch (Exception e) {
             populateTripOptions(model);
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("trips", tripService.getAllTrips());
+            var tripPage = tripService.getPaginatedTrips(0, 5);
+            model.addAttribute("trips", tripPage.getContent());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", tripPage.getTotalPages());
             return "admin/trips";
         }
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteTrip(@PathVariable Long id) {
-        tripService.deleteTrip(id);
+    public String deleteTrip(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            tripService.deleteTrip(id);
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/admin/trips";
     }
 

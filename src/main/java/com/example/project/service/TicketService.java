@@ -131,19 +131,11 @@ public class TicketService {
     @Transactional
     public void autoCancelExpiredTickets() {
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(30);
-        List<Ticket> expiredTickets = ticketRepository.findPendingOlderThan(threshold);
-
-        for (Ticket ticket : expiredTickets) {
-            // an toàn nếu có tiến trình khác vừa xác nhận/hủy
-            if (ticket.getStatus() != TicketStatus.PENDING) {
-                continue;
-            }
-            ticket.setStatus(TicketStatus.CANCELLED);
-            ticketRepository.save(ticket);
-
-            Seat seat = ticket.getSeat();
-            seat.setStatus(SeatStatus.AVAILABLE);
-            seatRepository.save(seat);
+        // Giải phóng ghế trước khi hủy vé (do logic truy vấn ghế dựa trên vé PENDING)
+        int freedSeats = ticketRepository.freeExpiredSeats(threshold);
+        int cancelledTickets = ticketRepository.cancelExpiredTickets(threshold);
+        if (cancelledTickets > 0) {
+            System.out.println("Auto-cancelled " + cancelledTickets + " expired tickets and freed " + freedSeats + " seats.");
         }
     }
 }

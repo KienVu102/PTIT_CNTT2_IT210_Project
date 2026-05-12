@@ -45,6 +45,14 @@ public class BookingService {
         Trip trip = tripRepository.findById(dto.getTripId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến xe"));
 
+        // 4.1. Kiểm tra chuyến xe đã qua giờ khởi hành chưa
+        if (trip.getDepartureTime().isBefore(LocalDateTime.now())) {
+            // Hoàn trả ghế về trạng thái trống
+            seat.setStatus(SeatStatus.AVAILABLE);
+            seatRepository.save(seat);
+            throw new RuntimeException("Chuyến xe này đã qua giờ khởi hành, không thể đặt vé!");
+        }
+
         // 5. Tạo vé mới - CORE-06
         Ticket ticket = new Ticket();
         String ticketCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();

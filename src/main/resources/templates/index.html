@@ -6,62 +6,492 @@
     <title>Bus Ticket Pro - Đặt vé xe buýt trực tuyến</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
-        :root { --primary-color: #0d6efd; --secondary-color: #6c757d; }
-        .hero-section {
-            background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
-            color: white;
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --dark-bg: #f1f5f9; /* light background */
+            --card-bg: #ffffff; /* white card tone */
+            --light-bg: #f8f9fa;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --vexere-yellow: #fcd34d;
+            --vexere-yellow-hover: #fbbf24;
+            --border-radius: 12px;
         }
-        .hero-section::before {
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #1e3a5f !important; /* Original blue/dark or vexere blue header */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #fcd34d !important;
+        }
+        .nav-link {
+            font-weight: 600;
+            color: #ffffff !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #fcd34d !important;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hero-banner::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(241,245,249,1));
         }
-        .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease; border: none; }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
-        .search-box { background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 2rem; }
-        .btn-search { background: linear-gradient(135deg, #0d6efd, #0dcaf0); border: none; color: white; }
-        .btn-search:hover { background: linear-gradient(135deg, #0b5ed7, #0bacbe); color: white; }
-        .navbar-brand { font-weight: 700; font-size: 1.5rem; }
-        .nav-link { font-weight: 500; }
+
+        /* Vexere Search Box */
+        .search-container {
+            position: relative;
+            z-index: 10;
+            margin-top: -120px; /* Pull up over banner */
+        }
+        
+        .search-box-wrapper {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-tab {
+            color: var(--text-light);
+            font-weight: 600;
+            cursor: pointer;
+            padding-bottom: 1rem;
+            margin-bottom: -1rem;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-tab.active {
+            color: var(--vexere-yellow);
+            border-bottom-color: var(--vexere-yellow);
+        }
+
+        .search-form-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input-group {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            height: 60px;
+        }
+
+        .search-input-group:hover {
+            border-color: #cbd5e1;
+        }
+
+        .search-input-group i {
+            color: #0ea5e9;
+            font-size: 1.2rem;
+        }
+
+        .search-input-group select,
+        .search-input-group input {
+            background: transparent;
+            border: none;
+            color: var(--text-dark);
+            width: 100%;
+            outline: none;
+            font-weight: 500;
+        }
+        
+        .search-input-group select option {
+            background: var(--card-bg);
+            color: var(--text-dark);
+        }
+
+        .search-input-group label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0;
+            display: block;
+        }
+
+        .swap-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 -1.5rem;
+            z-index: 2;
+        }
+
+        .btn-search-main {
+            background: var(--vexere-yellow);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            height: 60px;
+            padding: 0 2.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-search-main:hover {
+            background: var(--vexere-yellow-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Dropdown */
+        .custom-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            width: 320px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .custom-dropdown-menu.show {
+            display: block;
+        }
+
+        .custom-dropdown-menu .dropdown-header {
+            padding: 1rem 1rem 0.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .custom-dropdown-menu .dropdown-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .custom-dropdown-menu .dropdown-item {
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .custom-dropdown-menu .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .custom-dropdown-menu .dropdown-item i {
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .custom-dropdown-menu .dropdown-item:hover {
+            background: #f8fafc;
+            color: var(--text-dark);
+        }
+
+        .custom-select-input {
+            background: transparent;
+            border: none;
+            color: var(--text-dark);
+            width: 100%;
+            outline: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .custom-select-input::placeholder {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Removed invert filter for date icon in light theme */
+        input[type="date"].custom-select-input::-webkit-calendar-picker-indicator {
+            filter: none;
+        }
+
+        /* Trust Badges */
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .badge-item i {
+            color: var(--vexere-yellow);
+            font-size: 1.2rem;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        /* Route Cards */
+        .route-card {
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            display: block;
+            color: white;
+        }
+
+        .route-card:hover {
+            transform: translateY(-5px);
+            color: white;
+        }
+
+        .route-image-wrapper {
+            height: 140px;
+            overflow: hidden;
+        }
+
+        .route-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .route-card:hover .route-image {
+            transform: scale(1.05);
+        }
+
+        .route-info {
+            padding: 1rem;
+            height: 80px;
+        }
+
+        .bg-color-1 { background-color: #71828f; }
+        .bg-color-2 { background-color: #5e4a5d; }
+        .bg-color-3 { background-color: #a67c52; }
+        .bg-color-4 { background-color: #b28169; }
+
+        .route-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .route-price {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .route-price span {
+            text-decoration: line-through;
+            opacity: 0.6;
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Promo Cards */
+        .promo-card {
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .promo-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .promo-info {
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: #000000;
+            padding: 3rem 0 2rem;
+            margin-top: 5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-section h6 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a, .footer-section p, .footer-section span {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #ffffff;
+        }
+
+        .search-field-error {
+            display: none;
+            color: #e53e3e;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 6px;
+            padding-left: 0;
+            letter-spacing: 0.01em;
+            animation: errorSlideIn 0.3s ease-out;
+        }
+
+        .search-field-error::before {
+            content: '\f33a';
+            font-family: 'bootstrap-icons';
+            margin-right: 4px;
+            font-size: 0.72rem;
+        }
+
+        .search-input-invalid {
+            border-color: #f87171 !important;
+            background: #fef2f2 !important;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12) !important;
+            transition: all 0.25s ease;
+        }
+
+        @keyframes errorSlideIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 992px) {
+            .search-form-row {
+                flex-direction: column;
+            }
+            .swap-btn {
+                transform: rotate(90deg);
+                margin: -1rem 0;
+            }
+            .search-container {
+                margin-top: -50px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="/"><i class="bi bi-bus-front"></i> Bus Ticket Pro</a>
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-bus-front me-2"></i> Bus Ticket Pro
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link active" href="/"><i class="bi bi-house-door"></i> Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/trips/search"><i class="bi bi-search"></i> Tìm chuyến xe</a></li>
-                <li class="nav-item"><a class="nav-link" href="/tickets/search"><i class="bi bi-ticket-perforated"></i> Tra cứu vé</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Đơn hàng của tôi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Mở bán vé trên hệ thống</a>
+                </li>
             </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="nav-link" href="/auth/login"><i class="bi bi-box-arrow-in-right"></i> Đăng nhập</a>
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item me-3">
+                    <a class="nav-link" href="#"><i class="bi bi-telephone-fill me-1"></i> Hotline 24/7</a>
                 </li>
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="nav-link" href="/auth/register"><i class="bi bi-person-plus"></i> Đăng ký</a>
+                    <a class="btn btn-outline-light btn-sm px-3 py-2 rounded-pill" href="/auth/login">
+                        Đăng nhập
+                    </a>
                 </li>
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> <span sec:authentication="name"></span>
+                        <i class="bi bi-person-circle me-1"></i> <span sec:authentication="name"></span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-speedometer2"></i> Admin</a></li>
-                        <li sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="dropdown-item" href="/staff/pending-tickets"><i class="bi bi-clipboard-check"></i> Duyệt vé</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><form th:action="@{/auth/logout}" method="post" style="margin:0;"><button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></form></li>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="background: var(--card-bg);">
+                        <li><a class="dropdown-item text-dark" href="/profile"><i class="bi bi-person me-2"></i> Hồ sơ</a></li>
+                        <li><a class="dropdown-item text-dark" href="/tickets/search"><i class="bi bi-ticket-perforated me-2"></i> Tra cứu vé</a></li>
+                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item text-dark" href="/admin/reports"><i class="bi bi-speedometer2 me-2"></i> Admin</a></li>
+                        <li sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="dropdown-item text-dark" href="/staff/pending-tickets"><i class="bi bi-clipboard-check me-2"></i> Duyệt vé</a></li>
+                        <li><hr class="dropdown-divider border-secondary"></li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post" style="margin:0;">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -69,125 +499,165 @@
     </div>
 </nav>
 
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="container position-relative">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h1 class="display-4 fw-bold mb-3">Đặt vé xe buýt dễ dàng, nhanh chóng</h1>
-                <p class="lead mb-4">Hệ thống đặt vé xe buýt trực tuyến thông minh. Tìm kiếm chuyến xe, chọn ghế vé thanh toán tiện lợi chỉ trong vài phút.</p>
-                <a href="/trips/search" class="btn btn-light btn-lg fw-semibold me-2"><i class="bi bi-search"></i> Tìm chuyến xe ngay</a>
-                <a href="/tickets/search" class="btn btn-outline-light btn-lg fw-semibold"><i class="bi bi-ticket-perforated"></i> Tra cứu vé</a>
-            </div>
-            <div class="col-lg-6">
-                <div class="search-box">
-                    <h5 class="mb-3 text-dark"><i class="bi bi-funnel"></i> Tìm kiếm nhanh</h5>
-                    <form th:action="@{/trips/search}" method="get">
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Điểm đi</label>
-                            <select class="form-select" name="fromId" required>
-                                <option value="">Chọn điểm đi...</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Điểm đến</label>
-                            <select class="form-select" name="toId" required>
-                                <option value="">Chọn điểm đến...</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Ngày khởi hành</label>
-                            <input type="date" class="form-control" name="date" required>
-                        </div>
-                        <button type="submit" class="btn btn-search w-100 py-2 fw-semibold"><i class="bi bi-search"></i> Tìm chuyến xe</button>
-                    </form>
+<!-- Hero Banner -->
+<div class="hero-banner"></div>
+
+<!-- Search Section -->
+<div class="container search-container" data-aos="fade-up">
+    <div class="search-box-wrapper">
+        <div class="search-tabs">
+            <div class="search-tab active"><i class="bi bi-bus-front"></i> Xe khách</div>
+            <div class="search-tab"><i class="bi bi-airplane"></i> Máy bay</div>
+            <div class="search-tab"><i class="bi bi-train-front"></i> Tàu hỏa</div>
+            <div class="search-tab"><i class="bi bi-car-front"></i> Thuê xe</div>
+        </div>
+        
+        <form th:action="@{/trips/search}" method="get" class="search-form-row" id="searchForm" novalidate>
+            <!-- Nơi xuất phát -->
+            <div class="search-input-group position-relative" id="fromContainer">
+                <i class="bi bi-record-circle text-primary"></i>
+                <div class="w-100">
+                    <label>Nơi xuất phát</label>
+                    <input type="text" class="custom-select-input" id="fromDisplay" placeholder="Chọn điểm đi..." autocomplete="off">
+                    <input type="hidden" name="fromId" id="fromIdValue">
+                    <div class="search-field-error" id="from-error"></div>
+                </div>
+                
+                <div class="custom-dropdown-menu" id="fromDropdown">
+                    <div class="dropdown-header">Địa điểm phổ biến</div>
+                    <ul class="dropdown-list">
+                        <li class="dropdown-item" th:each="loc : ${locations}" th:data-value="${loc.id}" th:data-text="${loc.name}">
+                            <i class="bi bi-geo-alt"></i> <span th:text="${loc.name}"></span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+            
+            <div class="swap-btn" id="swapBtn">
+                <i class="bi bi-arrow-left-right"></i>
+            </div>
+            
+            <!-- Nơi đến -->
+            <div class="search-input-group position-relative" id="toContainer">
+                <i class="bi bi-geo-alt-fill text-danger"></i>
+                <div class="w-100">
+                    <label>Nơi đến</label>
+                    <input type="text" class="custom-select-input" id="toDisplay" placeholder="Chọn điểm đến..." autocomplete="off">
+                    <input type="hidden" name="toId" id="toIdValue">
+                    <div class="search-field-error" id="to-error"></div>
+                </div>
+                
+                <div class="custom-dropdown-menu" id="toDropdown">
+                    <div class="dropdown-header">Địa điểm phổ biến</div>
+                    <ul class="dropdown-list">
+                        <li class="dropdown-item" th:each="loc : ${locations}" th:data-value="${loc.id}" th:data-text="${loc.name}">
+                            <i class="bi bi-geo-alt"></i> <span th:text="${loc.name}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-<!-- Features -->
-<section class="py-5 bg-light">
+            <!-- Ngày đi -->
+            <div class="search-input-group" id="dateContainer">
+                <i class="bi bi-calendar3 text-primary"></i>
+                <div class="w-100">
+                    <label>Ngày đi (Tùy chọn)</label>
+                    <input type="date" name="date" class="custom-select-input" id="dateInput">
+                    <div class="search-field-error" id="date-error"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-search-main">
+                Tìm kiếm
+            </button>
+        </form>
+    </div>
+
+    <div class="trust-badges" data-aos="fadeIn">
+        <div class="badge-item"><i class="bi bi-check-circle-fill"></i> Chắc chắn có chỗ</div>
+        <div class="badge-item"><i class="bi bi-headset"></i> Hỗ trợ 24/7</div>
+        <div class="badge-item"><i class="bi bi-tags-fill"></i> Nhiều ưu đãi</div>
+        <div class="badge-item"><i class="bi bi-coin"></i> Thanh toán đa dạng</div>
+    </div>
+</div>
+
+<!-- Tuyến đường phổ biến -->
+<section class="py-5 mt-4">
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Tại sao chọn Bus Ticket Pro?</h2>
-            <p class="text-muted">Trải nghiệm đặt vé tốt nhất dành cho hành khách</p>
-        </div>
+        <h3 class="section-title" data-aos="fade-right">Tuyến đường phổ biến</h3>
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card feature-card h-100 p-4 text-center">
-                    <div class="text-primary fs-1 mb-3"><i class="bi bi-lightning-charge"></i></div>
-                    <h5 class="fw-bold">Đặt vé nhanh chóng</h5>
-                    <p class="text-muted mb-0">Chỉ với vài thao tác đơn giản, bạn có thể đặt vé xe buýt mọi lúc, mọi nơi.</p>
-                </div>
+            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+                <a href="/trips/search?fromId=1&toId=5" class="route-card">
+                    <div class="route-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=600&q=80" alt="Sa Pa" class="route-image">
+                    </div>
+                    <div class="route-info bg-color-1">
+                        <div class="route-name">Hà Nội - Sa Pa</div>
+                        <div class="route-price">Từ 270.000đ <span>300.000đ</span></div>
+                    </div>
+                </a>
             </div>
-            <div class="col-md-4">
-                <div class="card feature-card h-100 p-4 text-center">
-                    <div class="text-success fs-1 mb-3"><i class="bi bi-shield-check"></i></div>
-                    <h5 class="fw-bold">Thanh toán an toàn</h5>
-                    <p class="text-muted mb-0">Hệ thống bảo mật cao, hỗ trợ xác nhận thanh toán tại quầy bởi nhân viên.</p>
-                </div>
+            
+            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                <a href="/trips/search?fromId=1&toId=4" class="route-card">
+                    <div class="route-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=600&q=80" alt="Hải Phòng" class="route-image">
+                    </div>
+                    <div class="route-info bg-color-2">
+                        <div class="route-name">Hà Nội - Hải Phòng</div>
+                        <div class="route-price">Từ 120.000đ</div>
+                    </div>
+                </a>
             </div>
-            <div class="col-md-4">
-                <div class="card feature-card h-100 p-4 text-center">
-                    <div class="text-info fs-1 mb-3"><i class="bi bi-headset"></i></div>
-                    <h5 class="fw-bold">Hỗ trợ 24/7</h5>
-                    <p class="text-muted mb-0">Đội ngũ nhân viên luôn sẵn sàng hỗ trợ bạn mọi lúc, mọi nơi.</p>
-                </div>
+
+            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+                <a href="/trips/search?fromId=2&toId=6" class="route-card">
+                    <div class="route-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=600&q=80" alt="Đà Lạt" class="route-image">
+                    </div>
+                    <div class="route-info bg-color-3">
+                        <div class="route-name">Sài Gòn - Đà Lạt</div>
+                        <div class="route-price">Từ 249.000đ <span>450.000đ</span></div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="400">
+                <a href="/trips/search?fromId=2&toId=7" class="route-card">
+                    <div class="route-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=600&q=80" alt="Vũng Tàu" class="route-image">
+                    </div>
+                    <div class="route-info bg-color-4">
+                        <div class="route-name">Sài Gòn - Vũng Tàu</div>
+                        <div class="route-price">Từ 170.000đ</div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Routes -->
-<section class="py-5">
+<!-- Ưu đãi nổi bật -->
+<section class="py-4 mb-5">
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Các tuyến đường phổ biến</h2>
-            <p class="text-muted">Khám phá các tuyến xe buýt hot nhất hiện nay</p>
-        </div>
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3"><i class="bi bi-geo-alt fs-4"></i></div>
-                            <div><h6 class="mb-0 fw-bold">Hà Nội</h6><small class="text-muted">→ TP. Hồ Chí Minh</small></div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small"><i class="bi bi-clock"></i> ~30 giờ</span>
-                            <a href="/trips/search?fromId=1&toId=2" class="btn btn-outline-primary btn-sm">Tìm vé</a>
-                        </div>
-                    </div>
+        <h3 class="section-title" data-aos="fade-right">Ưu đãi nổi bật</h3>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="promo-card">
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=800&q=80" alt="Promo 1">
+                    <div class="promo-info">12h - 14h Thứ 3 - Flash Sale đến 50%</div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 me-3"><i class="bi bi-geo-alt fs-4"></i></div>
-                            <div><h6 class="mb-0 fw-bold">Hà Nội</h6><small class="text-muted">→ Đà Nẵng</small></div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small"><i class="bi bi-clock"></i> ~14 giờ</span>
-                            <a href="/trips/search?fromId=1&toId=3" class="btn btn-outline-primary btn-sm">Tìm vé</a>
-                        </div>
-                    </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="promo-card">
+                    <img src="https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=800&q=80" alt="Promo 2">
+                    <div class="promo-info">Giới thiệu bạn mới - Nhận quà khủng từ Bus Ticket Pro</div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 me-3"><i class="bi bi-geo-alt fs-4"></i></div>
-                            <div><h6 class="mb-0 fw-bold">TP. Hồ Chí Minh</h6><small class="text-muted">→ Đà Nẵng</small></div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small"><i class="bi bi-clock"></i> ~16 giờ</span>
-                            <a href="/trips/search?fromId=2&toId=3" class="btn btn-outline-primary btn-sm">Tìm vé</a>
-                        </div>
-                    </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="promo-card">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80" alt="Promo 3">
+                    <div class="promo-info">Ưu đãi bất ngờ khi đặt qua App</div>
                 </div>
             </div>
         </div>
@@ -195,12 +665,236 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-dark text-white py-4 mt-auto">
-    <div class="container text-center">
-        <p class="mb-0"><i class="bi bi-bus-front"></i> Bus Ticket Pro &copy; 2026. Đặt vé xe buýt thông minh.</p>
+<footer>
+    <div class="container">
+        <div class="footer-content row g-4">
+            <div class="footer-section col-md-3">
+                <h6><i class="bi bi-bus-front me-2 text-warning"></i>Bus Ticket Pro</h6>
+                <p class="text-muted small">Hệ thống đặt vé xe buýt trực tuyến thông minh, nhanh chóng và tiện lợi, mang đến trải nghiệm tuyệt vời.</p>
+                <div class="mt-3">
+                    <a href="https://www.facebook.com/VuDinhKienn" class="me-3 fs-5"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="me-3 fs-5"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="me-3 fs-5"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section col-md-3">
+                <h6>Tuyến đường</h6>
+                <div class="d-flex flex-column small gap-2">
+                    <a href="#">Xe đi Đà Lạt từ Sài Gòn</a>
+                    <a href="#">Xe đi Vũng Tàu từ Sài Gòn</a>
+                    <a href="#">Xe đi Hải Phòng từ Hà Nội</a>
+                    <a href="#">Xe đi Sa Pa từ Hà Nội</a>
+                </div>
+            </div>
+            <div class="footer-section col-md-3">
+                <h6>Hỗ trợ</h6>
+                <div class="d-flex flex-column small gap-2">
+                    <a href="#">Hướng dẫn đặt vé</a>
+                    <a href="#">Câu hỏi thường gặp</a>
+                    <a href="#">Chính sách bảo mật</a>
+                    <a href="#">Điều khoản sử dụng</a>
+                </div>
+            </div>
+            <div class="footer-section col-md-3">
+                <h6>Liên hệ</h6>
+                <div class="d-flex flex-column small gap-2">
+                    <span><i class="bi bi-telephone me-2"></i>1900 1234</span>
+                    <span><i class="bi bi-envelope me-2"></i>support@busticketpro.vn</span>
+                    <span><i class="bi bi-geo-alt me-2"></i>123 Nguyễn Huệ, Q.1, TP.HCM</span>
+                </div>
+            </div>
+        </div>
+        <hr class="border-secondary mt-4 mb-3">
+        <div class="text-center small">
+            <p class="mb-0 text-muted">&copy; 2026 Bus Ticket Pro. Tất cả quyền được bảo lưu.</p>
+        </div>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50
+        });
+
+        // Dropdown Logic
+        function setupDropdown(inputId, hiddenId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const hidden = document.getElementById(hiddenId);
+            const dropdown = document.getElementById(dropdownId);
+            if (!input || !dropdown) return;
+            
+            const items = dropdown.querySelectorAll('.dropdown-item');
+
+            input.addEventListener('focus', function() {
+                document.querySelectorAll('.custom-dropdown-menu').forEach(menu => menu.classList.remove('show'));
+                dropdown.classList.add('show');
+                input.select();
+            });
+
+            input.addEventListener('input', function() {
+                dropdown.classList.add('show');
+                const val = this.value.toLowerCase();
+                items.forEach(item => {
+                    const text = item.getAttribute('data-text').toLowerCase();
+                    if(text.includes(val)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    input.value = this.getAttribute('data-text');
+                    hidden.value = this.getAttribute('data-value');
+                    dropdown.classList.remove('show');
+                });
+            });
+
+            input.addEventListener('blur', function() {
+                setTimeout(() => {
+                    if (!dropdown.classList.contains('show')) {
+                        let matched = false;
+                        items.forEach(item => {
+                            if(item.getAttribute('data-value') === hidden.value) {
+                                input.value = item.getAttribute('data-text');
+                                matched = true;
+                            }
+                        });
+                        if(!matched) {
+                            input.value = '';
+                            hidden.value = '';
+                        }
+                    }
+                }, 200);
+            });
+        }
+
+        setupDropdown('fromDisplay', 'fromIdValue', 'fromDropdown');
+        setupDropdown('toDisplay', 'toIdValue', 'toDropdown');
+
+        document.addEventListener('click', function(e) {
+            if(!e.target.closest('.search-input-group')) {
+                document.querySelectorAll('.custom-dropdown-menu').forEach(menu => menu.classList.remove('show'));
+            }
+        });
+
+        // Swap Button Logic
+        const swapBtn = document.getElementById('swapBtn');
+        if(swapBtn) {
+            swapBtn.addEventListener('click', function() {
+                const fromDisplay = document.getElementById('fromDisplay');
+                const fromIdValue = document.getElementById('fromIdValue');
+                const toDisplay = document.getElementById('toDisplay');
+                const toIdValue = document.getElementById('toIdValue');
+
+                const tempDisplay = fromDisplay.value;
+                const tempId = fromIdValue.value;
+
+                fromDisplay.value = toDisplay.value;
+                fromIdValue.value = toIdValue.value;
+
+                toDisplay.value = tempDisplay;
+                toIdValue.value = tempId;
+
+                this.style.transition = 'transform 0.3s ease';
+                const currentRotation = this.style.transform.replace(/[^0-9]/g, '') || 0;
+                this.style.transform = `rotate(${parseInt(currentRotation) + 180}deg)`;
+
+                // Clear errors after swap if values exist
+                if (fromIdValue.value) clearSearchError('fromContainer', 'from-error');
+                if (toIdValue.value) clearSearchError('toContainer', 'to-error');
+            });
+        }
+
+        // ===== SEARCH FORM VALIDATION =====
+        function showSearchError(containerId, errorId, message) {
+            const container = document.getElementById(containerId);
+            const errorEl = document.getElementById(errorId);
+            if (container) container.classList.add('search-input-invalid');
+            if (errorEl) { errorEl.textContent = message; errorEl.style.display = 'block'; }
+        }
+
+        function clearSearchError(containerId, errorId) {
+            const container = document.getElementById(containerId);
+            const errorEl = document.getElementById(errorId);
+            if (container) container.classList.remove('search-input-invalid');
+            if (errorEl) errorEl.style.display = 'none';
+        }
+
+        // Clear errors on interaction
+        const fromDisplayEl = document.getElementById('fromDisplay');
+        const toDisplayEl = document.getElementById('toDisplay');
+        const dateInputEl = document.getElementById('dateInput');
+
+        if (fromDisplayEl) {
+            fromDisplayEl.addEventListener('input', function() {
+                clearSearchError('fromContainer', 'from-error');
+            });
+        }
+        if (toDisplayEl) {
+            toDisplayEl.addEventListener('input', function() {
+                clearSearchError('toContainer', 'to-error');
+            });
+        }
+        if (dateInputEl) {
+            dateInputEl.addEventListener('input', function() {
+                clearSearchError('dateContainer', 'date-error');
+            });
+            dateInputEl.addEventListener('change', function() {
+                clearSearchError('dateContainer', 'date-error');
+            });
+        }
+
+        // Also clear from/to errors when item is selected from dropdown
+        document.querySelectorAll('#fromDropdown .dropdown-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                clearSearchError('fromContainer', 'from-error');
+            });
+        });
+        document.querySelectorAll('#toDropdown .dropdown-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                clearSearchError('toContainer', 'to-error');
+            });
+        });
+
+        // Form submit validation
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                let allValid = true;
+                const fromId = document.getElementById('fromIdValue').value;
+                const toId = document.getElementById('toIdValue').value;
+                const dateVal = document.getElementById('dateInput').value;
+
+                if (!fromId) {
+                    showSearchError('fromContainer', 'from-error', 'Vui lòng chọn nơi xuất phát');
+                    allValid = false;
+                }
+                if (!toId) {
+                    showSearchError('toContainer', 'to-error', 'Vui lòng chọn nơi đến');
+                    allValid = false;
+                }
+
+                // Check from != to
+                if (fromId && toId && fromId === toId) {
+                    showSearchError('toContainer', 'to-error', 'Nơi đến phải khác nơi xuất phát');
+                    allValid = false;
+                }
+
+                if (!allValid) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>

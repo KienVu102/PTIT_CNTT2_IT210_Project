@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.dto.RegisterDTO;
 import com.example.project.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,8 @@ public class AuthController {
 
     // CORE-01: Trang đăng nhập
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpServletRequest request) {
+        request.getSession(true);
         return "auth/login";
     }
 

@@ -67,17 +67,26 @@ public class DataSeeder {
             }
 
             // Seed Users (CORE-01 - mật khẩu BCrypt)
-            if (userRepo.count() == 0) {
-                User admin = new User(null, "admin", passwordEncoder.encode("admin123"), Role.ADMIN, "Quản trị viên", "0900000001", "admin@busticket.com");
-                User staff = new User(null, "staff", passwordEncoder.encode("staff123"), Role.STAFF, "Nhân viên bán vé", "0900000002", "staff@busticket.com");
-                User passenger = new User(null, "passenger", passwordEncoder.encode("pass123"), Role.PASSENGER, "Hành khách Demo", "0900000003", "passenger@busticket.com");
-                userRepo.saveAll(Arrays.asList(admin, staff, passenger));
-                System.out.println("=== SEED USERS ===");
-                System.out.println("admin / admin123 (ADMIN)");
-                System.out.println("staff / staff123 (STAFF)");
-                System.out.println("passenger / pass123 (PASSENGER)");
-            }
+            // Kiểm tra từng user, nếu chưa có thì tạo, nếu có rồi thì cập nhật mật khẩu
+            String defaultPassword = passwordEncoder.encode("password");
+            seedOrUpdateUser(userRepo, "admin", defaultPassword, Role.ADMIN, "Admin User", "0901234567", "admin@example.com");
+            seedOrUpdateUser(userRepo, "staff1", defaultPassword, Role.STAFF, "Staff Member", "0909876543", "staff@example.com");
+            seedOrUpdateUser(userRepo, "user1", defaultPassword, Role.PASSENGER, "John Doe", "0912345678", "user1@example.com");
+            seedOrUpdateUser(userRepo, "user2", defaultPassword, Role.PASSENGER, "Jane Smith", "0923456789", "user2@example.com");
+            System.out.println("=== DEMO USERS (password: password) ===");
+            System.out.println("admin (ADMIN) | staff1 (STAFF) | user1 (PASSENGER) | user2 (PASSENGER)");
         };
+    }
+
+    private void seedOrUpdateUser(UserRepository userRepo, String username, String encodedPassword,
+                                   Role role, String fullName, String phone, String email) {
+        User existing = userRepo.findByUsername(username);
+        if (existing != null) {
+            existing.setPasswordHash(encodedPassword);
+            userRepo.save(existing);
+        } else {
+            userRepo.save(new User(null, username, encodedPassword, role, fullName, phone, email));
+        }
     }
 
     private void seedSeats(SeatRepository seatRepo, Trip trip, int totalSeats) {

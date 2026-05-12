@@ -2,184 +2,391 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký - Bus Ticket Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            --brand-primary: #fcd34d;
+            --brand-primary-dk: #fbbf24;
+            --ui-bg: #f1f5f9;
+            --ui-surface: #ffffff;
+            --ui-border: #e2e8f0;
+            --ui-text: #0f172a;
+            --ui-text-muted: #64748b;
+            --r-lg: 16px;
+            --r-md: 12px;
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--ui-bg);
+            color: var(--ui-text);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 12px;
+        }
+
+        .auth-shell {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .auth-card {
+            background: var(--ui-surface);
+            border: 1px solid var(--ui-border);
+            border-radius: var(--r-lg);
+            padding: 40px 32px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--brand-primary-dk);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .auth-title {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--ui-text);
+        }
+
+        .auth-subtitle {
+            margin-top: 8px;
+            color: var(--ui-text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-label {
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--ui-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .input-group-text {
+            background: #f8fafc;
+            border: 2px solid var(--ui-border);
+            border-right: none;
+            color: var(--ui-text-muted);
+            border-radius: 10px 0 0 10px;
+        }
+
+        .form-control {
+            border: 2px solid var(--ui-border);
+            border-radius: 0 10px 10px 0;
+            padding: 11px 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--brand-primary);
+            box-shadow: none;
+            background: #fff;
+        }
+
+        .btn-auth {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dk));
+            color: #000;
+            font-weight: 700;
+            padding: 14px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(252, 211, 77, 0.3);
+            margin-top: 12px;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 211, 77, 0.4);
+            color: #000;
+        }
+
         .error-message {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            display: block;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #ef4444;
+            font-weight: 500;
         }
-        .form-control.is-invalid {
-            border-color: #dc3545;
-            background-image: none;
+
+        .client-error {
+            display: none;
         }
-        .form-control.is-invalid:focus {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+
+        .is-invalid {
+            border-color: #ef4444 !important;
+        }
+
+        .auth-footer {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--ui-text-muted);
+            font-size: 0.95rem;
+        }
+
+        .auth-footer a {
+            color: var(--ui-text);
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px solid var(--brand-primary);
+            padding-bottom: 2px;
+            transition: all 0.2s;
+        }
+
+        .auth-footer a:hover {
+            background: var(--brand-primary);
+            color: #000;
         }
     </style>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4>Đăng ký tài khoản Hành khách</h4>
-                </div>
-                <div class="card-body">
-                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-                    <form th:action="@{/auth/register}" th:object="${registerDTO}" method="post" novalidate id="registerForm">
-                        <div class="mb-3">
-                            <label class="form-label">Tên đăng nhập *</label>
-                            <input type="text" class="form-control" th:field="*{username}" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" id="username">
-                            <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
-                            <div class="error-message" id="username-error" style="display: none;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Mật khẩu *</label>
-                            <input type="password" class="form-control" th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" id="password">
-                            <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-                            <div class="error-message" id="password-error" style="display: none;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Họ và tên *</label>
-                            <input type="text" class="form-control" th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'" id="fullName">
-                            <div class="error-message" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
-                            <div class="error-message" id="fullName-error" style="display: none;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Số điện thoại *</label>
-                            <input type="text" class="form-control" th:field="*{phone}" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" id="phone">
-                            <div class="error-message" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
-                            <div class="error-message" id="phone-error" style="display: none;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email (Gmail) *</label>
-                            <input type="email" class="form-control" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" id="email">
-                            <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                            <div class="error-message" id="email-error" style="display: none;"></div>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
-                    </form>
-                    <hr>
-                    <div class="text-center">
-                        <small>Đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a></small>
-                    </div>
-                </div>
+<body>
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="bi bi-bus-front"></i>
             </div>
+            <h1 class="auth-title">Đăng ký tài khoản</h1>
+            <p class="auth-subtitle">Tham gia cộng đồng Bus Ticket Pro ngay hôm nay</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger py-2 px-3 small">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/auth/register}" th:object="${registerDTO}" method="post" novalidate id="registerForm">
+            <div class="mb-3">
+                <label class="form-label" for="username">Tên đăng nhập *</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{username}"
+                        th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                        id="username"
+                        placeholder="Nhập tên đăng nhập"
+                        autocomplete="username"
+                    >
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                <div class="error-message client-error" id="username-error"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="password">Mật khẩu *</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input
+                        type="password"
+                        class="form-control"
+                        th:field="*{password}"
+                        th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                        id="password"
+                        placeholder="Nhập mật khẩu"
+                        autocomplete="new-password"
+                    >
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                <div class="error-message client-error" id="password-error"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="fullName">Họ và tên *</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{fullName}"
+                        th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                        id="fullName"
+                        placeholder="Nhập họ và tên"
+                        autocomplete="name"
+                    >
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                <div class="error-message client-error" id="fullName-error"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="phone">Số điện thoại *</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                    <input
+                        type="text"
+                        class="form-control"
+                        th:field="*{phone}"
+                        th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"
+                        id="phone"
+                        placeholder="Nhập số điện thoại"
+                        autocomplete="tel"
+                    >
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                <div class="error-message client-error" id="phone-error"></div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label" for="email">Email (gmail) *</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input
+                        type="email"
+                        class="form-control"
+                        th:field="*{email}"
+                        th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                        id="email"
+                        placeholder="example@gmail.com"
+                        autocomplete="email"
+                    >
+                </div>
+                <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                <div class="error-message client-error" id="email-error"></div>
+            </div>
+
+            <button type="submit" class="btn-auth">Đăng ký</button>
+        </form>
+
+        <div class="auth-footer">
+            Đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registerForm');
-    
-    // Real-time validation
-    document.getElementById('username').addEventListener('input', validateUsername);
-    document.getElementById('password').addEventListener('input', validatePassword);
-    document.getElementById('fullName').addEventListener('input', validateFullName);
-    document.getElementById('phone').addEventListener('input', validatePhone);
-    document.getElementById('email').addEventListener('input', validateEmail);
-    
-    function validateUsername() {
-        const field = document.getElementById('username');
-        const error = document.getElementById('username-error');
-        const value = field.value.trim();
-        
-        if (!value) {
-            showError(field, error, 'Tên đăng nhập không được để trống');
-        } else if (value.length < 4 || value.length > 50) {
-            showError(field, error, 'Tên đăng nhập phải 4-50 ký tự');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function validatePassword() {
-        const field = document.getElementById('password');
-        const error = document.getElementById('password-error');
-        const value = field.value;
-        
-        if (!value) {
-            showError(field, error, 'Mật khẩu không được để trống');
-        } else if (value.length < 6) {
-            showError(field, error, 'Mật khẩu phải ít nhất 6 ký tự');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function validateFullName() {
-        const field = document.getElementById('fullName');
-        const error = document.getElementById('fullName-error');
-        const value = field.value.trim();
-        
-        if (!value) {
-            showError(field, error, 'Họ tên không được để trống');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function validatePhone() {
-        const field = document.getElementById('phone');
-        const error = document.getElementById('phone-error');
-        const value = field.value.trim();
-        
-        if (!value) {
-            showError(field, error, 'Số điện thoại không được để trống');
-        } else if (!/^[0-9]{10,11}$/.test(value)) {
-            showError(field, error, 'Số điện thoại phải là 10-11 số');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function validateEmail() {
-        const field = document.getElementById('email');
-        const error = document.getElementById('email-error');
-        const value = field.value.trim();
-        
-        if (!value) {
-            showError(field, error, 'Email không được để trống');
-        } else if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/.test(value)) {
-            showError(field, error, 'Email phải đúng định dạng Gmail (@gmail.com)');
-        } else {
-            clearError(field, error);
-        }
-    }
-    
-    function showError(field, errorElement, message) {
-        field.classList.add('is-invalid');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-    }
-    
-    function clearError(field, errorElement) {
-        field.classList.remove('is-invalid');
-        errorElement.style.display = 'none';
-    }
-    
-    // Form submission validation
-    form.addEventListener('submit', function(e) {
-        validateUsername();
-        validatePassword();
-        validateFullName();
-        validatePhone();
-        validateEmail();
-        
-        const invalidFields = form.querySelectorAll('.is-invalid');
-        if (invalidFields.length > 0) {
-            e.preventDefault();
-            invalidFields[0].focus();
-        }
-    });
-});
-</script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("registerForm");
+        const usernameField = document.getElementById("username");
+        const passwordField = document.getElementById("password");
+        const fullNameField = document.getElementById("fullName");
+        const phoneField = document.getElementById("phone");
+        const emailField = document.getElementById("email");
 
+        function showError(field, errorElement, message) {
+            field.classList.add("is-invalid");
+            errorElement.textContent = message;
+            errorElement.style.display = "block";
+        }
+
+        function clearError(field, errorElement) {
+            field.classList.remove("is-invalid");
+            errorElement.style.display = "none";
+        }
+
+        function validateUsername() {
+            const value = usernameField.value.trim();
+            const error = document.getElementById("username-error");
+            if (!value) {
+                showError(usernameField, error, "Tên đăng nhập không được để trống");
+                return false;
+            }
+            if (value.length < 4 || value.length > 50) {
+                showError(usernameField, error, "Tên đăng nhập phải từ 4 đến 50 ký tự");
+                return false;
+            }
+            clearError(usernameField, error);
+            return true;
+        }
+
+        function validatePassword() {
+            const value = passwordField.value;
+            const error = document.getElementById("password-error");
+            if (!value) {
+                showError(passwordField, error, "Mật khẩu không được để trống");
+                return false;
+            }
+            if (value.length < 6) {
+                showError(passwordField, error, "Mật khẩu phải ít nhất 6 ký tự");
+                return false;
+            }
+            clearError(passwordField, error);
+            return true;
+        }
+
+        function validateFullName() {
+            const value = fullNameField.value.trim();
+            const error = document.getElementById("fullName-error");
+            if (!value) {
+                showError(fullNameField, error, "Họ và tên không được để trống");
+                return false;
+            }
+            clearError(fullNameField, error);
+            return true;
+        }
+
+        function validatePhone() {
+            const value = phoneField.value.trim();
+            const error = document.getElementById("phone-error");
+            if (!value) {
+                showError(phoneField, error, "Số điện thoại không được để trống");
+                return false;
+            }
+            if (!/^[0-9]{10,11}$/.test(value)) {
+                showError(phoneField, error, "Số điện thoại phải là 10-11 số");
+                return false;
+            }
+            clearError(phoneField, error);
+            return true;
+        }
+
+        function validateEmail() {
+            const value = emailField.value.trim();
+            const error = document.getElementById("email-error");
+            if (!value) {
+                showError(emailField, error, "Email không được để trống");
+                return false;
+            }
+            if (!/^[A-Za-z0-9._%+-]+@gmail\.com$/.test(value)) {
+                showError(emailField, error, "Email phải đúng định dạng @gmail.com");
+                return false;
+            }
+            clearError(emailField, error);
+            return true;
+        }
+
+        usernameField.addEventListener("input", validateUsername);
+        passwordField.addEventListener("input", validatePassword);
+        fullNameField.addEventListener("input", validateFullName);
+        phoneField.addEventListener("input", validatePhone);
+        emailField.addEventListener("input", validateEmail);
+
+        form.addEventListener("submit", function (e) {
+            const okUser = validateUsername();
+            const okPass = validatePassword();
+            const okName = validateFullName();
+            const okPhone = validatePhone();
+            const okEmail = validateEmail();
+            if (!okUser || !okPass || !okName || !okPhone || !okEmail) {
+                e.preventDefault();
+                const invalid = form.querySelector(".is-invalid");
+                if (invalid) {
+                    invalid.focus();
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
